@@ -1,0 +1,109 @@
+<html>
+<head>
+<title>RedBug.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+RedBug.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">org</span><span class="s2">.</span><span class="s1">cis1200</span><span class="s2">.</span><span class="s1">galaga</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+
+<span class="s0">public class </span><span class="s1">RedBug </span><span class="s0">extends </span><span class="s1">Bug </span><span class="s2">{</span>
+    <span class="s3">//colors</span>
+    <span class="s0">private final </span><span class="s1">Color colorRed </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Color</span><span class="s2">(</span><span class="s4">255</span><span class="s2">, </span><span class="s4">72</span><span class="s2">, </span><span class="s4">56</span><span class="s2">);</span>
+    <span class="s0">private final </span><span class="s1">Color colorBlue </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Color</span><span class="s2">(</span><span class="s4">26</span><span class="s2">, </span><span class="s4">111</span><span class="s2">, </span><span class="s4">255</span><span class="s2">);</span>
+
+    <span class="s3">//for bug falling motion</span>
+    <span class="s0">private int </span><span class="s1">count </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">amp </span><span class="s2">= </span><span class="s4">10</span><span class="s2">;</span>
+<span class="s3">//    private boolean left;</span>
+
+    <span class="s0">private static final int </span><span class="s1">POINTS </span><span class="s2">= </span><span class="s4">40</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">RedBug</span><span class="s2">(</span><span class="s0">int </span><span class="s1">x</span><span class="s2">, </span><span class="s0">int </span><span class="s1">y</span><span class="s2">) {</span>
+        <span class="s0">super</span><span class="s2">(</span><span class="s1">x</span><span class="s2">, </span><span class="s1">y</span><span class="s2">);</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">setSpeed</span><span class="s2">(</span><span class="s4">12</span><span class="s2">);</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">setPoints</span><span class="s2">(</span><span class="s1">POINTS</span><span class="s2">);</span>
+<span class="s3">//        this.left = Math.random() &lt; 0.5;</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">fall</span><span class="s2">() {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">count </span><span class="s2">== </span><span class="s4">0</span><span class="s2">) {</span>
+            <span class="s1">setPoints</span><span class="s2">(</span><span class="s1">getPoints</span><span class="s2">() + </span><span class="s4">10</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s1">moveY</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getSpeed</span><span class="s2">());</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">getTop</span><span class="s2">()) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">count </span><span class="s2">% </span><span class="s4">40 </span><span class="s2">== </span><span class="s4">0</span><span class="s2">) {</span>
+                <span class="s1">amp </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">round</span><span class="s2">((</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">random</span><span class="s2">() * </span><span class="s4">3</span><span class="s2">)) + </span><span class="s4">10</span><span class="s2">;</span>
+            <span class="s2">}</span>
+<span class="s3">//            moveY(12);</span>
+            <span class="s1">moveX</span><span class="s2">((</span><span class="s0">int</span><span class="s2">) ((</span><span class="s1">amp </span><span class="s2">- </span><span class="s4">3</span><span class="s2">) * </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">sin</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() / </span><span class="s4">40</span><span class="s2">)));</span>
+
+            <span class="s0">this</span><span class="s2">.</span><span class="s1">setAngle</span><span class="s2">(</span><span class="s4">180 </span><span class="s2">- </span><span class="s4">180 </span><span class="s2">* (</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">atan</span><span class="s2">((</span><span class="s1">amp</span><span class="s2">) * </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">cos</span><span class="s2">((</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() + </span><span class="s4">16</span><span class="s2">) / </span><span class="s4">40</span><span class="s2">) / </span><span class="s4">40</span><span class="s2">)) / </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">PI</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s1">count</span><span class="s2">++;</span>
+        <span class="s0">super</span><span class="s2">.</span><span class="s1">fall</span><span class="s2">();</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getGo</span><span class="s2">() &amp;&amp; </span><span class="s0">this</span><span class="s2">.</span><span class="s1">status</span><span class="s2">()) {</span>
+            <span class="s1">count </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+            <span class="s1">setPoints</span><span class="s2">(</span><span class="s1">getPoints</span><span class="s2">() - </span><span class="s4">10</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">draw</span><span class="s2">(</span><span class="s1">Graphics g1</span><span class="s2">) {</span>
+        <span class="s1">Graphics2D g </span><span class="s2">= (</span><span class="s1">Graphics2D</span><span class="s2">) </span><span class="s1">g1</span><span class="s2">;</span>
+
+        <span class="s0">double </span><span class="s1">angle </span><span class="s2">= </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getAngle</span><span class="s2">();</span>
+
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">translate</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">(), </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">());</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">rotate</span><span class="s2">(</span><span class="s1">angle </span><span class="s2">* </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">PI</span><span class="s2">/</span><span class="s4">180</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">translate</span><span class="s2">(-</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">(), -</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">());</span>
+
+
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">colorRed</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - </span><span class="s4">13</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() + </span><span class="s4">3</span><span class="s2">, </span><span class="s4">4</span><span class="s2">, </span><span class="s4">13</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() + </span><span class="s4">9</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() + </span><span class="s4">3</span><span class="s2">, </span><span class="s4">4</span><span class="s2">, </span><span class="s4">13</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - </span><span class="s4">11</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">1</span><span class="s2">, </span><span class="s4">4</span><span class="s2">, </span><span class="s4">12</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() + </span><span class="s4">7</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">1</span><span class="s2">, </span><span class="s4">4</span><span class="s2">, </span><span class="s4">12</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - </span><span class="s4">8</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">4</span><span class="s2">, </span><span class="s4">16</span><span class="s2">, </span><span class="s4">12</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - </span><span class="s4">13</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">5</span><span class="s2">, </span><span class="s4">26</span><span class="s2">, </span><span class="s4">3</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - </span><span class="s4">13</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">14</span><span class="s2">, </span><span class="s4">4</span><span class="s2">, </span><span class="s4">9</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() + </span><span class="s4">9</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">14</span><span class="s2">, </span><span class="s4">4</span><span class="s2">, </span><span class="s4">9</span><span class="s2">);</span>
+
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - </span><span class="s4">6</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">10</span><span class="s2">, </span><span class="s4">12</span><span class="s2">, </span><span class="s4">7</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - </span><span class="s4">3</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">7</span><span class="s2">, </span><span class="s4">6</span><span class="s2">, </span><span class="s4">16</span><span class="s2">);</span>
+
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">colorRed</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - </span><span class="s4">4</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">10</span><span class="s2">, </span><span class="s4">3</span><span class="s2">, </span><span class="s4">3</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() + </span><span class="s4">1</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">10</span><span class="s2">, </span><span class="s4">3</span><span class="s2">, </span><span class="s4">3</span><span class="s2">);</span>
+
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">colorBlue</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - </span><span class="s4">4</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">14</span><span class="s2">, </span><span class="s4">3</span><span class="s2">, </span><span class="s4">4</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() + </span><span class="s4">1</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">14</span><span class="s2">, </span><span class="s4">3</span><span class="s2">, </span><span class="s4">4</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - </span><span class="s4">3</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() + </span><span class="s4">9 </span><span class="s2">, </span><span class="s4">6</span><span class="s2">, </span><span class="s4">3</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">fillRect</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - </span><span class="s4">3</span><span class="s2">, </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() + </span><span class="s4">1</span><span class="s2">, </span><span class="s4">6</span><span class="s2">, </span><span class="s4">4</span><span class="s2">);</span>
+
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">translate</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">(), </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">());</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">rotate</span><span class="s2">(-</span><span class="s1">angle </span><span class="s2">* </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">PI</span><span class="s2">/</span><span class="s4">180</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">translate</span><span class="s2">(-</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">(), -</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">());</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

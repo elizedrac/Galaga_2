@@ -1,0 +1,151 @@
+<html>
+<head>
+<title>Bug.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Bug.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">org</span><span class="s2">.</span><span class="s1">cis1200</span><span class="s2">.</span><span class="s1">galaga</span><span class="s2">;</span>
+
+<span class="s0">public abstract class </span><span class="s1">Bug </span><span class="s0">extends </span><span class="s1">GalagaObj </span><span class="s2">{</span>
+    <span class="s3">//x-motion</span>
+    <span class="s0">private int </span><span class="s1">startY</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">startX</span><span class="s2">;</span>
+
+    <span class="s0">private boolean </span><span class="s1">isAlive</span><span class="s2">;</span>
+
+    <span class="s0">private int </span><span class="s1">speed</span><span class="s2">;</span>
+    <span class="s0">private boolean </span><span class="s1">endgame </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+
+    <span class="s0">private boolean </span><span class="s1">top </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">points</span><span class="s2">;</span>
+
+    <span class="s0">double </span><span class="s1">beamNum </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+    <span class="s0">boolean </span><span class="s1">beam </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+
+    <span class="s0">public </span><span class="s1">Bug</span><span class="s2">(</span><span class="s0">int </span><span class="s1">x</span><span class="s2">, </span><span class="s0">int </span><span class="s1">y</span><span class="s2">) {</span>
+        <span class="s0">super</span><span class="s2">(</span><span class="s1">x</span><span class="s2">, </span><span class="s1">y</span><span class="s2">);</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">isAlive </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">startY </span><span class="s2">= </span><span class="s1">y</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">startX </span><span class="s2">= </span><span class="s1">x</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public int </span><span class="s1">getSpeed</span><span class="s2">() {</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">speed</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setSpeed</span><span class="s2">(</span><span class="s0">int </span><span class="s1">s</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">speed </span><span class="s2">= </span><span class="s1">s</span><span class="s2">;</span>
+        <span class="s1">endgame </span><span class="s2">= !</span><span class="s1">endgame</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setPoints</span><span class="s2">(</span><span class="s0">int </span><span class="s1">p</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">points </span><span class="s2">= </span><span class="s1">p</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">updateStartX</span><span class="s2">(</span><span class="s0">int </span><span class="s1">v</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">startX </span><span class="s2">= </span><span class="s1">v</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public int </span><span class="s1">getStartX</span><span class="s2">() {</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">startX</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s3">//to update bug array based on kills</span>
+    <span class="s0">public void </span><span class="s1">beenHit</span><span class="s2">() {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">isAlive </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">setGo</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">//since startX is updated for bugs</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">restart</span><span class="s2">() {</span>
+        <span class="s0">super</span><span class="s2">.</span><span class="s1">restart</span><span class="s2">();</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">setX</span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">startX</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">move</span><span class="s2">(</span><span class="s0">int </span><span class="s1">val</span><span class="s2">) {</span>
+        <span class="s1">moveX</span><span class="s2">(</span><span class="s1">val</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public int </span><span class="s1">getPoints</span><span class="s2">() {</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">points</span><span class="s2">;</span>
+    <span class="s2">};</span>
+
+    <span class="s0">public boolean </span><span class="s1">status</span><span class="s2">() {</span>
+        <span class="s0">return </span><span class="s1">isAlive</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s3">//for testing purposes</span>
+    <span class="s0">public void </span><span class="s1">setStatus</span><span class="s2">(</span><span class="s0">boolean </span><span class="s1">b</span><span class="s2">) {</span>
+        <span class="s1">isAlive </span><span class="s2">= </span><span class="s1">b</span><span class="s2">;</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">b</span><span class="s2">) {</span>
+            <span class="s1">setGo</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s3">//if bug re-emerges from top</span>
+    <span class="s0">public boolean </span><span class="s1">getTop</span><span class="s2">() {</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">top</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setTop</span><span class="s2">(</span><span class="s0">boolean </span><span class="s1">b</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">top </span><span class="s2">= </span><span class="s1">b</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setBeamNum</span><span class="s2">(</span><span class="s0">double </span><span class="s1">b</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">beamNum </span><span class="s2">= </span><span class="s1">b</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setBeam</span><span class="s2">(</span><span class="s0">boolean </span><span class="s1">b</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">beam </span><span class="s2">= </span><span class="s1">b</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">taken</span><span class="s2">(</span><span class="s1">GalagaObj that</span><span class="s2">) {</span>
+        <span class="s0">return </span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">beam </span><span class="s2">&amp;&amp; (</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() + </span><span class="s0">this</span><span class="s2">.</span><span class="s1">WIDTH </span><span class="s2">+ </span><span class="s4">14 </span><span class="s2">&gt; </span><span class="s1">that</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">()</span>
+                <span class="s2">&amp;&amp; </span><span class="s1">that</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() + </span><span class="s1">that</span><span class="s2">.</span><span class="s1">WIDTH </span><span class="s2">+ </span><span class="s4">14 </span><span class="s2">&gt; </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">()) &amp;&amp;</span>
+                <span class="s1">beamNum </span><span class="s2">&gt; </span><span class="s4">15</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">getEndgame</span><span class="s2">() {</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">endgame</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s3">//called by tick</span>
+    <span class="s0">public void </span><span class="s1">fall</span><span class="s2">() {</span>
+        <span class="s3">//bug emerges from top if it makes it to the bottom of the frame unharmed</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s1">GalagaObj</span><span class="s2">.</span><span class="s1">HEIGHT </span><span class="s2">/ </span><span class="s4">2 </span><span class="s2">&gt;= </span><span class="s1">GameCourt</span><span class="s2">.</span><span class="s1">GAME_HEIGHT</span><span class="s2">) {</span>
+            <span class="s0">this</span><span class="s2">.</span><span class="s1">moveY</span><span class="s2">(-</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">());</span>
+            <span class="s0">this</span><span class="s2">.</span><span class="s1">setX</span><span class="s2">(</span><span class="s1">startX</span><span class="s2">);</span>
+            <span class="s0">if </span><span class="s2">(!</span><span class="s1">endgame</span><span class="s2">) {</span>
+                <span class="s1">setTop</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+                <span class="s0">this</span><span class="s2">.</span><span class="s1">setAngle</span><span class="s2">(</span><span class="s4">180</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s3">//resets back to original position upon returning</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">startY </span><span class="s2">&lt; (</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() + </span><span class="s4">7</span><span class="s2">) &amp;&amp; </span><span class="s0">this</span><span class="s2">.</span><span class="s1">startY </span><span class="s2">&gt; (</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s4">7</span><span class="s2">)) {</span>
+            <span class="s0">if </span><span class="s2">(!</span><span class="s1">endgame</span><span class="s2">) {</span>
+                <span class="s0">this</span><span class="s2">.</span><span class="s1">setAngle</span><span class="s2">(</span><span class="s4">0</span><span class="s2">);</span>
+                <span class="s1">setGo</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+                <span class="s1">setTop</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+                <span class="s0">this</span><span class="s2">.</span><span class="s1">restart</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

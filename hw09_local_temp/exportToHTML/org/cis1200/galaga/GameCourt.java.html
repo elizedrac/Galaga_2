@@ -1,0 +1,757 @@
+<html>
+<head>
+<title>GameCourt.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #5f826b; font-style: italic;}
+.s4 { color: #7a7e85;}
+.s5 { color: #2aacb8;}
+.s6 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+GameCourt.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">org</span><span class="s2">.</span><span class="s1">cis1200</span><span class="s2">.</span><span class="s1">galaga</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">ArrayList</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">LinkedList</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">ListIterator</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*;</span>
+
+<span class="s3">/**</span>
+ <span class="s3">* GameCourt</span>
+ <span class="s3">* This class holds the primary game logic for how different objects interact</span>
+ <span class="s3">* with one another.</span>
+ <span class="s3">*/</span>
+<span class="s0">public class </span><span class="s1">GameCourt </span><span class="s0">extends </span><span class="s1">JPanel </span><span class="s2">{</span>
+    <span class="s4">//Court Variables</span>
+    <span class="s0">public static final int </span><span class="s1">START_X </span><span class="s2">= </span><span class="s5">77</span><span class="s2">;</span>
+    <span class="s0">public static final int </span><span class="s1">START_Y </span><span class="s2">= </span><span class="s5">65</span><span class="s2">;</span>
+    <span class="s0">public static final int </span><span class="s1">GAME_WIDTH </span><span class="s2">= </span><span class="s5">850</span><span class="s2">;</span>
+    <span class="s0">public static final int </span><span class="s1">GAME_HEIGHT </span><span class="s2">= </span><span class="s5">850</span><span class="s2">;</span>
+    <span class="s4">// Update interval for timer, in milliseconds</span>
+    <span class="s0">public static final int </span><span class="s1">INTERVAL </span><span class="s2">= </span><span class="s5">20</span><span class="s2">;</span>
+    <span class="s4">//keeps track of milliseconds</span>
+    <span class="s0">private int </span><span class="s1">count </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+
+
+    <span class="s4">// Game status variables</span>
+    <span class="s0">private boolean </span><span class="s1">playing </span><span class="s2">= </span><span class="s0">false</span><span class="s2">; </span><span class="s4">//whether the game is running</span>
+    <span class="s0">private boolean </span><span class="s1">gameEnd </span><span class="s2">= </span><span class="s0">false</span><span class="s2">; </span><span class="s4">//if game is over</span>
+    <span class="s0">private boolean </span><span class="s1">win </span><span class="s2">= </span><span class="s0">false</span><span class="s2">; </span><span class="s4">//win or lose</span>
+    <span class="s0">private int </span><span class="s1">points</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">highScore </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+    <span class="s0">private final </span><span class="s1">JLabel status</span><span class="s2">; </span><span class="s4">// Current status text, i.e. &quot;Running...&quot;</span>
+
+    <span class="s0">private boolean </span><span class="s1">pauseMode </span><span class="s2">= </span><span class="s0">false</span><span class="s2">; </span><span class="s4">//for when bugs and/or fighters are resetting</span>
+    <span class="s0">private boolean </span><span class="s1">endgame</span><span class="s2">; </span><span class="s4">//final three bugs</span>
+
+
+    <span class="s4">//Bug variables;</span>
+    <span class="s0">private final int </span><span class="s1">w </span><span class="s2">= </span><span class="s5">4</span><span class="s2">; </span><span class="s4">//grid rows</span>
+    <span class="s0">private final int </span><span class="s1">h </span><span class="s2">= </span><span class="s5">8</span><span class="s2">; </span><span class="s4">//grid columns</span>
+    <span class="s0">private final </span><span class="s1">Bug</span><span class="s2">[][] </span><span class="s1">bugGrid </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Bug</span><span class="s2">[</span><span class="s1">w</span><span class="s2">][</span><span class="s1">h</span><span class="s2">];</span>
+    <span class="s0">private int </span><span class="s1">bugsRemaining</span><span class="s2">;</span>
+
+    <span class="s4">//Generates values that stores which bugs are falling</span>
+    <span class="s0">private </span><span class="s1">LinkedList</span><span class="s2">&lt;</span><span class="s1">Integer</span><span class="s2">&gt; </span><span class="s1">rand</span><span class="s2">;</span>
+    <span class="s4">//for updating start values of moving bugs</span>
+    <span class="s0">private int </span><span class="s1">moveCount</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">direction</span><span class="s2">;</span>
+
+    <span class="s4">//bug fire list</span>
+    <span class="s0">private final </span><span class="s1">Fire</span><span class="s2">[] </span><span class="s1">bugFires </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Fire</span><span class="s2">[</span><span class="s5">2</span><span class="s2">];</span>
+
+    <span class="s4">//green bug effects</span>
+    <span class="s0">private int </span><span class="s1">bugBeam</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">Bug fighterBug </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">Fighter takenFighter </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+
+
+    <span class="s4">//Fighter variables</span>
+    <span class="s0">private final </span><span class="s1">Fighter</span><span class="s2">[] </span><span class="s1">fighters </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Fighter</span><span class="s2">[</span><span class="s5">3</span><span class="s2">]; </span><span class="s4">//for multiple players</span>
+    <span class="s0">private </span><span class="s1">Fighter fighter</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">currFighter </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s4">//keeps track of lives/fighter number</span>
+    <span class="s0">private </span><span class="s1">LinkedList</span><span class="s2">&lt;</span><span class="s1">Fire</span><span class="s2">&gt; </span><span class="s1">fire</span><span class="s2">; </span><span class="s4">//fire coming from shooter</span>
+    <span class="s0">private </span><span class="s1">ListIterator</span><span class="s2">&lt;</span><span class="s1">Fire</span><span class="s2">&gt; </span><span class="s1">fireIterator</span><span class="s2">; </span><span class="s4">//iterates through fire</span>
+    <span class="s0">private boolean </span><span class="s1">left </span><span class="s2">= </span><span class="s0">false</span><span class="s2">; </span><span class="s4">//fighter direction</span>
+
+
+    <span class="s4">//explosion variables</span>
+    <span class="s0">private </span><span class="s1">Explosion fighterExplosion </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Explosion</span><span class="s2">();</span>
+    <span class="s0">private </span><span class="s1">Explosion bugExplosion </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Explosion</span><span class="s2">();</span>
+
+
+    <span class="s4">//background effects</span>
+    <span class="s0">private final </span><span class="s1">RandomDot</span><span class="s2">[] </span><span class="s1">dots </span><span class="s2">= </span><span class="s0">new </span><span class="s1">RandomDot</span><span class="s2">[</span><span class="s5">300</span><span class="s2">];</span>
+
+
+    <span class="s4">//key variables</span>
+    <span class="s0">int </span><span class="s1">k1 </span><span class="s2">= </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_UP</span><span class="s2">;</span>
+    <span class="s4">//set keys helper</span>
+    <span class="s0">public void </span><span class="s1">setKeys</span><span class="s2">(</span><span class="s0">int </span><span class="s1">k1</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">k1 </span><span class="s2">= </span><span class="s1">k1</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+
+    <span class="s4">//fire stats</span>
+    <span class="s0">int </span><span class="s1">hits</span><span class="s2">;</span>
+    <span class="s0">int </span><span class="s1">total</span><span class="s2">;</span>
+
+    <span class="s4">//test bug</span>
+    <span class="s1">BlueBug bug </span><span class="s2">= </span><span class="s0">new </span><span class="s1">BlueBug</span><span class="s2">(-</span><span class="s5">10</span><span class="s2">, </span><span class="s5">1000</span><span class="s2">);</span>
+
+    <span class="s0">public </span><span class="s1">GameCourt</span><span class="s2">(</span><span class="s1">JLabel status</span><span class="s2">) {</span>
+        <span class="s4">// creates border around the court area, JComponent method</span>
+        <span class="s1">setBorder</span><span class="s2">(</span><span class="s1">BorderFactory</span><span class="s2">.</span><span class="s1">createLineBorder</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLACK</span><span class="s2">));</span>
+        <span class="s1">setBackground</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">BLACK</span><span class="s2">);</span>
+
+        <span class="s4">//timer that calls tick function at each interval</span>
+        <span class="s1">Timer timer </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Timer</span><span class="s2">(</span><span class="s1">INTERVAL</span><span class="s2">, </span><span class="s1">e -&gt; tick</span><span class="s2">());</span>
+        <span class="s1">timer</span><span class="s2">.</span><span class="s1">start</span><span class="s2">(); </span><span class="s4">// MAKE SURE TO START THE TIMER!</span>
+
+        <span class="s4">// Enable keyboard focus on the court area. When this component has the</span>
+        <span class="s4">// keyboard focus, key events are handled by its key listener.</span>
+        <span class="s1">setFocusable</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+
+        <span class="s4">//key listeners</span>
+        <span class="s1">addKeyListener</span><span class="s2">(</span><span class="s0">new </span><span class="s1">KeyAdapter</span><span class="s2">() {</span>
+            <span class="s0">public void </span><span class="s1">keyPressed</span><span class="s2">(</span><span class="s1">KeyEvent e</span><span class="s2">) {</span>
+                <span class="s4">//alternative method to restart</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">e</span><span class="s2">.</span><span class="s1">getKeyCode</span><span class="s2">() == </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_R</span><span class="s2">) {</span>
+                    <span class="s1">playing </span><span class="s2">= !</span><span class="s1">playing</span><span class="s2">;</span>
+                    <span class="s1">reset</span><span class="s2">();</span>
+                <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">e</span><span class="s2">.</span><span class="s1">getKeyCode</span><span class="s2">() == </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_SPACE </span><span class="s2">&amp;&amp; !</span><span class="s1">gameEnd</span><span class="s2">) { </span><span class="s4">//pause button</span>
+                    <span class="s1">playing </span><span class="s2">= !</span><span class="s1">playing</span><span class="s2">;</span>
+                <span class="s2">}</span>
+                <span class="s4">//fighter motion</span>
+                <span class="s0">if </span><span class="s2">((</span><span class="s1">e</span><span class="s2">.</span><span class="s1">getKeyCode</span><span class="s2">() == </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_RIGHT </span><span class="s2">||</span>
+                        <span class="s1">e</span><span class="s2">.</span><span class="s1">getKeyCode</span><span class="s2">() == </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_LEFT</span><span class="s2">)</span>
+                        <span class="s2">&amp;&amp; (</span><span class="s1">playing </span><span class="s2">|| </span><span class="s1">win</span><span class="s2">)) {</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">e</span><span class="s2">.</span><span class="s1">getKeyCode</span><span class="s2">() == </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_RIGHT</span><span class="s2">) {</span>
+                        <span class="s1">left </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+                    <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                        <span class="s1">left </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                    <span class="s2">}</span>
+                    <span class="s1">fighter</span><span class="s2">.</span><span class="s1">setGo</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+                <span class="s2">}</span>
+                <span class="s4">//fighter shooting</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">e</span><span class="s2">.</span><span class="s1">getKeyCode</span><span class="s2">() == </span><span class="s1">k1 </span><span class="s2">&amp;&amp; (</span><span class="s1">playing </span><span class="s2">|| </span><span class="s1">win</span><span class="s2">) &amp;&amp; !</span><span class="s1">pauseMode </span><span class="s2">&amp;&amp; (</span><span class="s1">count </span><span class="s2">% </span><span class="s5">40 </span><span class="s2">== </span><span class="s5">0 </span><span class="s2">|| </span><span class="s1">count </span><span class="s2">% </span><span class="s5">180 </span><span class="s2">== </span><span class="s5">0</span><span class="s2">)) {</span>
+                    <span class="s1">total</span><span class="s2">++;</span>
+                    <span class="s0">if </span><span class="s2">(!</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getDub</span><span class="s2">()) {</span>
+                        <span class="s1">fighterShooter</span><span class="s2">(</span><span class="s5">0</span><span class="s2">);</span>
+                    <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                        <span class="s1">fighterShooter</span><span class="s2">((</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">WIDTH </span><span class="s2">+ </span><span class="s5">6</span><span class="s2">)/ </span><span class="s5">2</span><span class="s2">);</span>
+                        <span class="s1">fighterShooter</span><span class="s2">(-(</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">WIDTH </span><span class="s2">+ </span><span class="s5">6</span><span class="s2">)/ </span><span class="s5">2</span><span class="s2">);</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+
+            <span class="s4">//for smoother motion</span>
+            <span class="s0">public void </span><span class="s1">keyReleased</span><span class="s2">(</span><span class="s1">KeyEvent e</span><span class="s2">) {</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">e</span><span class="s2">.</span><span class="s1">getKeyCode</span><span class="s2">() == </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_RIGHT </span><span class="s2">|| </span><span class="s1">e</span><span class="s2">.</span><span class="s1">getKeyCode</span><span class="s2">() == </span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_LEFT</span><span class="s2">) {</span>
+                    <span class="s1">fighter</span><span class="s2">.</span><span class="s1">setGo</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">});</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">status </span><span class="s2">= </span><span class="s1">status</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+
+    <span class="s4">//fighterShooter helper function</span>
+    <span class="s0">public </span><span class="s1">Fire getCurrentFire</span><span class="s2">() {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">fireIterator</span><span class="s2">.</span><span class="s1">hasNext</span><span class="s2">()) {</span>
+            <span class="s1">Fire f </span><span class="s2">= </span><span class="s1">fireIterator</span><span class="s2">.</span><span class="s1">next</span><span class="s2">();</span>
+            <span class="s1">f</span><span class="s2">.</span><span class="s1">setGo</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+            <span class="s0">return </span><span class="s1">f</span><span class="s2">;</span>
+        <span class="s2">}</span>
+        <span class="s0">return </span><span class="s2">(</span><span class="s0">new </span><span class="s1">Fire</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">));</span>
+    <span class="s2">}</span>
+
+    <span class="s4">//sets up fighter's fire</span>
+    <span class="s0">public void </span><span class="s1">fighterShooter</span><span class="s2">(</span><span class="s0">int </span><span class="s1">adj</span><span class="s2">) {</span>
+        <span class="s4">//iterator starts over once it reaches its end to avoid having an infinite list</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s0">this</span><span class="s2">.</span><span class="s1">fireIterator</span><span class="s2">.</span><span class="s1">hasNext</span><span class="s2">()) {</span>
+            <span class="s0">this</span><span class="s2">.</span><span class="s1">fireIterator </span><span class="s2">= </span><span class="s1">fire</span><span class="s2">.</span><span class="s1">listIterator</span><span class="s2">();</span>
+        <span class="s2">}</span>
+        <span class="s1">Fire f </span><span class="s2">= </span><span class="s1">getCurrentFire</span><span class="s2">();</span>
+        <span class="s4">//accounts for fighter being in motion when up is pressed</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getGo</span><span class="s2">() &amp;&amp; </span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() != (</span><span class="s1">Fighter</span><span class="s2">.</span><span class="s1">WIDTH </span><span class="s2">+ </span><span class="s5">6</span><span class="s2">) / </span><span class="s5">2</span>
+                <span class="s2">&amp;&amp; </span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() != </span><span class="s1">GAME_WIDTH </span><span class="s2">- (</span><span class="s1">Fighter</span><span class="s2">.</span><span class="s1">WIDTH </span><span class="s2">+ </span><span class="s5">6</span><span class="s2">) / </span><span class="s5">2</span><span class="s2">) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">left</span><span class="s2">) {</span>
+                <span class="s1">f</span><span class="s2">.</span><span class="s1">setX</span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - </span><span class="s5">7</span><span class="s2">);</span>
+            <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                <span class="s1">f</span><span class="s2">.</span><span class="s1">setX</span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() + </span><span class="s5">7</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s4">//sets fire position to current fighter position before shooting</span>
+            <span class="s1">f</span><span class="s2">.</span><span class="s1">setX</span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">());</span>
+        <span class="s2">}</span>
+        <span class="s1">f</span><span class="s2">.</span><span class="s1">moveX</span><span class="s2">(</span><span class="s1">adj</span><span class="s2">); </span><span class="s4">//adjusts position if double fighter</span>
+    <span class="s2">}</span>
+
+
+    <span class="s4">//setBugFire helper</span>
+    <span class="s0">public void </span><span class="s1">BugFires</span><span class="s2">(</span><span class="s0">int </span><span class="s1">i</span><span class="s2">, </span><span class="s1">Bug bug</span><span class="s2">) {</span>
+        <span class="s1">bugFires</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">setX</span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">());</span>
+        <span class="s1">bugFires</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">setY</span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">());</span>
+        <span class="s1">bugFires</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">setGo</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s1">Bug currBug </span><span class="s2">= </span><span class="s0">null</span><span class="s2">; </span><span class="s4">//makes sure bugFire isn't sent from same bug</span>
+    <span class="s4">//add rand helper specifically for bug fire</span>
+    <span class="s0">public void </span><span class="s1">setBugFire</span><span class="s2">(</span><span class="s1">Bug bug</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">currBug </span><span class="s2">== </span><span class="s0">null </span><span class="s2">|| </span><span class="s1">currBug </span><span class="s2">!= </span><span class="s1">bug </span><span class="s2">|| </span><span class="s1">bugsRemaining </span><span class="s2">== </span><span class="s5">1</span><span class="s2">) {</span>
+            <span class="s0">if </span><span class="s2">(!</span><span class="s1">bugFires</span><span class="s2">[</span><span class="s5">0</span><span class="s2">].</span><span class="s1">getGo</span><span class="s2">() &amp;&amp; (!</span><span class="s1">bugFires</span><span class="s2">[</span><span class="s5">1</span><span class="s2">].</span><span class="s1">getGo</span><span class="s2">() || (</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">random</span><span class="s2">() &lt; </span><span class="s5">0.5</span><span class="s2">)) || </span><span class="s1">bugsRemaining </span><span class="s2">== </span><span class="s5">1</span><span class="s2">) {</span>
+                <span class="s1">BugFires</span><span class="s2">(</span><span class="s5">0</span><span class="s2">, </span><span class="s1">bug</span><span class="s2">);</span>
+            <span class="s2">} </span><span class="s0">else if </span><span class="s2">(!</span><span class="s1">bugFires</span><span class="s2">[</span><span class="s5">1</span><span class="s2">].</span><span class="s1">getGo</span><span class="s2">() &amp;&amp; </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">random</span><span class="s2">() &lt; </span><span class="s5">0.5</span><span class="s2">) {</span>
+                <span class="s1">BugFires</span><span class="s2">(</span><span class="s5">1</span><span class="s2">, </span><span class="s1">bug</span><span class="s2">);</span>
+            <span class="s2">}</span>
+            <span class="s1">currBug </span><span class="s2">= </span><span class="s1">bug</span><span class="s2">;</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+
+    <span class="s4">//adds new random value to rand for new bug to fall</span>
+    <span class="s0">public void </span><span class="s1">addRand</span><span class="s2">() {</span>
+        <span class="s0">int </span><span class="s1">x </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">)</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">round</span><span class="s2">(</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">random</span><span class="s2">() * (</span><span class="s1">w </span><span class="s2">* </span><span class="s1">h </span><span class="s2">- </span><span class="s5">1</span><span class="s2">));</span>
+        <span class="s4">//iteratively gets rid of repeats unless there's only three left (fix)</span>
+        <span class="s0">while </span><span class="s2">((</span><span class="s1">rand</span><span class="s2">.</span><span class="s1">contains</span><span class="s2">(</span><span class="s1">x</span><span class="s2">) || !</span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s1">x </span><span class="s2">/ </span><span class="s1">h</span><span class="s2">][</span><span class="s1">x </span><span class="s2">% </span><span class="s1">h</span><span class="s2">].</span><span class="s1">status</span><span class="s2">())) {</span>
+            <span class="s1">x </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">round</span><span class="s2">(</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">random</span><span class="s2">() * (</span><span class="s1">w </span><span class="s2">* </span><span class="s1">h </span><span class="s2">- </span><span class="s5">1</span><span class="s2">));</span>
+        <span class="s2">}</span>
+        <span class="s1">rand</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">x</span><span class="s2">);</span>
+        <span class="s1">Bug bug </span><span class="s2">= </span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s1">x </span><span class="s2">/ </span><span class="s1">h</span><span class="s2">][</span><span class="s1">x </span><span class="s2">% </span><span class="s1">h</span><span class="s2">];</span>
+        <span class="s1">bug</span><span class="s2">.</span><span class="s1">setGo</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+        <span class="s4">//if bugFire is not in motion, sends it to a new bug to shoot</span>
+        <span class="s1">setBugFire</span><span class="s2">(</span><span class="s1">bug</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+
+    <span class="s3">/**</span>
+     <span class="s3">* (Re-)set the game to its initial state.</span>
+     <span class="s3">*/</span>
+    <span class="s0">public void </span><span class="s1">reset</span><span class="s2">() {</span>
+        <span class="s1">hits </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+        <span class="s1">total </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+
+        <span class="s1">pauseMode </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+        <span class="s1">endgame </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+        <span class="s1">r </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+
+        <span class="s1">currFighter </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+        <span class="s1">takenFighter </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+        <span class="s1">bugBeam </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">)(</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">random</span><span class="s2">() * </span><span class="s5">8</span><span class="s2">); </span><span class="s4">//chooses which green bug to project beam</span>
+
+        <span class="s4">//3 fighters</span>
+        <span class="s1">fighters</span><span class="s2">[</span><span class="s5">0</span><span class="s2">] = </span><span class="s0">new </span><span class="s1">Fighter</span><span class="s2">(</span><span class="s5">428</span><span class="s2">, </span><span class="s5">670</span><span class="s2">);</span>
+        <span class="s1">fighters</span><span class="s2">[</span><span class="s5">1</span><span class="s2">] = </span><span class="s0">new </span><span class="s1">Fighter</span><span class="s2">(</span><span class="s5">50</span><span class="s2">, </span><span class="s5">710</span><span class="s2">);</span>
+        <span class="s1">fighters</span><span class="s2">[</span><span class="s5">2</span><span class="s2">] = </span><span class="s0">new </span><span class="s1">Fighter</span><span class="s2">(</span><span class="s5">90</span><span class="s2">, </span><span class="s5">710</span><span class="s2">);</span>
+
+        <span class="s1">fighter </span><span class="s2">= </span><span class="s1">fighters</span><span class="s2">[</span><span class="s1">currFighter</span><span class="s2">];</span>
+
+        <span class="s4">//bugs moving on top</span>
+        <span class="s1">moveCount </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+        <span class="s1">direction </span><span class="s2">= </span><span class="s5">1</span><span class="s2">;</span>
+
+        <span class="s4">//background</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s5">150</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">dots</span><span class="s2">[</span><span class="s1">i</span><span class="s2">] = </span><span class="s0">new </span><span class="s1">RandomDot</span><span class="s2">();</span>
+        <span class="s2">}</span>
+
+        <span class="s4">//fire variables</span>
+        <span class="s4">//bug fire</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">bugFires</span><span class="s2">.</span><span class="s1">length</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">bugFires</span><span class="s2">[</span><span class="s1">i</span><span class="s2">] = </span><span class="s0">new </span><span class="s1">Fire</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">RED</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s4">//fighter fire</span>
+        <span class="s1">fire </span><span class="s2">= </span><span class="s0">new </span><span class="s1">LinkedList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s5">50</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">fire</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Fire</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">));</span>
+        <span class="s2">}</span>
+        <span class="s1">fireIterator </span><span class="s2">= </span><span class="s1">fire</span><span class="s2">.</span><span class="s1">listIterator</span><span class="s2">();</span>
+
+
+        <span class="s4">//bug variables</span>
+        <span class="s1">bugsRemaining </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">j </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">j </span><span class="s2">&lt; </span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s5">0</span><span class="s2">].</span><span class="s1">length</span><span class="s2">; </span><span class="s1">j</span><span class="s2">++) {</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">bugGrid</span><span class="s2">.</span><span class="s1">length</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+                <span class="s1">Bug bug</span><span class="s2">;</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">i </span><span class="s2">== </span><span class="s5">0</span><span class="s2">) {</span>
+                    <span class="s1">bug </span><span class="s2">= </span><span class="s0">new </span><span class="s1">GreenBug</span><span class="s2">(</span><span class="s1">START_X </span><span class="s2">+ </span><span class="s5">100 </span><span class="s2">* </span><span class="s1">j</span><span class="s2">, </span><span class="s1">START_Y </span><span class="s2">+ </span><span class="s5">50 </span><span class="s2">* </span><span class="s1">i</span><span class="s2">);</span>
+                <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">i </span><span class="s2">== </span><span class="s5">3</span><span class="s2">) {</span>
+                    <span class="s1">bug </span><span class="s2">= </span><span class="s0">new </span><span class="s1">BlueBug</span><span class="s2">(</span><span class="s1">START_X </span><span class="s2">+ </span><span class="s5">100 </span><span class="s2">* </span><span class="s1">j</span><span class="s2">, </span><span class="s1">START_Y </span><span class="s2">+ </span><span class="s5">50 </span><span class="s2">* </span><span class="s1">i</span><span class="s2">);</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">bug </span><span class="s2">= </span><span class="s0">new </span><span class="s1">RedBug</span><span class="s2">(</span><span class="s1">START_X </span><span class="s2">+ </span><span class="s5">100 </span><span class="s2">* </span><span class="s1">j</span><span class="s2">, </span><span class="s1">START_Y </span><span class="s2">+ </span><span class="s5">50 </span><span class="s2">* </span><span class="s1">i</span><span class="s2">);</span>
+                <span class="s2">}</span>
+                <span class="s1">bugGrid</span><span class="s2">[</span><span class="s1">i</span><span class="s2">][</span><span class="s1">j</span><span class="s2">] = </span><span class="s1">bug</span><span class="s2">;</span>
+                <span class="s1">bugsRemaining </span><span class="s2">+= </span><span class="s5">1</span><span class="s2">;</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s1">rand </span><span class="s2">= </span><span class="s0">new </span><span class="s1">LinkedList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s5">3</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">addRand</span><span class="s2">();</span>
+        <span class="s2">}</span>
+
+        <span class="s4">//game status variables</span>
+        <span class="s1">points </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+        <span class="s1">playing </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+        <span class="s1">gameEnd </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+        <span class="s1">win </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+        <span class="s1">repaint</span><span class="s2">();</span>
+        <span class="s1">status</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s6">&quot;Running... Press SPACE to start/pause and R to reset&quot;</span><span class="s2">);</span>
+
+        <span class="s4">// Make sure that this component has the keyboard focus</span>
+        <span class="s1">requestFocusInWindow</span><span class="s2">();</span>
+    <span class="s2">}</span>
+
+
+    <span class="s4">//tick helper functions to simplify code</span>
+    <span class="s4">//background falling/blinking dots effect</span>
+    <span class="s0">public void </span><span class="s1">background</span><span class="s2">() {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">count </span><span class="s2">% </span><span class="s5">40 </span><span class="s2">== </span><span class="s5">0</span><span class="s2">) {</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s5">150</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+                <span class="s1">dots</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">moveY</span><span class="s2">(</span><span class="s5">2</span><span class="s2">);</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">dots</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">getY</span><span class="s2">() &gt;= </span><span class="s1">GAME_HEIGHT</span><span class="s2">) {</span>
+                    <span class="s1">dots</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">setY</span><span class="s2">(</span><span class="s5">0</span><span class="s2">);</span>
+                <span class="s2">}</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">count </span><span class="s2">% </span><span class="s5">480 </span><span class="s2">== </span><span class="s5">0</span><span class="s2">) {</span>
+                    <span class="s1">dots</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">setOpacity</span><span class="s2">(</span><span class="s5">100</span><span class="s2">);</span>
+                <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">count </span><span class="s2">% </span><span class="s5">240 </span><span class="s2">== </span><span class="s5">0</span><span class="s2">) {</span>
+                    <span class="s1">dots</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">setOpacity</span><span class="s2">(</span><span class="s5">90</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">updateFighter</span><span class="s2">() {</span>
+        <span class="s0">int </span><span class="s1">adj </span><span class="s2">= </span><span class="s5">1</span><span class="s2">;</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getDub</span><span class="s2">()) {</span>
+            <span class="s1">adj </span><span class="s2">= </span><span class="s5">2</span><span class="s2">;</span>
+        <span class="s2">} </span><span class="s4">//accounts for position shift if double fighter</span>
+
+        <span class="s4">//updates fighter position</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getGo</span><span class="s2">()) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">left</span><span class="s2">) {</span>
+                <span class="s4">//makes sure fighter can't exit borders</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() - (</span><span class="s5">20 </span><span class="s2">+ (</span><span class="s1">Fighter</span><span class="s2">.</span><span class="s1">WIDTH </span><span class="s2">+ </span><span class="s5">6</span><span class="s2">) / </span><span class="s5">2</span><span class="s2">) &gt;= </span><span class="s5">0</span><span class="s2">) {</span>
+                    <span class="s1">fighter</span><span class="s2">.</span><span class="s1">moveX</span><span class="s2">(- </span><span class="s5">7</span><span class="s2">);</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">fighter</span><span class="s2">.</span><span class="s1">setX</span><span class="s2">((</span><span class="s1">Fighter</span><span class="s2">.</span><span class="s1">WIDTH </span><span class="s2">+ </span><span class="s5">6</span><span class="s2">) / </span><span class="s5">2 </span><span class="s2">* </span><span class="s1">adj</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                <span class="s4">//makes sure fighter can't exit borders</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() + </span><span class="s5">20 </span><span class="s2">+ (</span><span class="s1">Fighter</span><span class="s2">.</span><span class="s1">WIDTH </span><span class="s2">+ </span><span class="s5">6</span><span class="s2">) / </span><span class="s5">2 </span><span class="s2">&lt;= </span><span class="s1">GAME_WIDTH</span><span class="s2">) {</span>
+                    <span class="s1">fighter</span><span class="s2">.</span><span class="s1">moveX</span><span class="s2">(</span><span class="s5">7</span><span class="s2">);</span>
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">fighter</span><span class="s2">.</span><span class="s1">setX</span><span class="s2">(</span><span class="s1">GAME_WIDTH </span><span class="s2">- (</span><span class="s1">Fighter</span><span class="s2">.</span><span class="s1">WIDTH </span><span class="s2">+ </span><span class="s5">6</span><span class="s2">) / </span><span class="s5">2 </span><span class="s2">* </span><span class="s1">adj</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">checkFire</span><span class="s2">() {</span>
+        <span class="s4">//checks if fire objects should be moving</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s1">Fire f</span><span class="s2">:</span>
+                <span class="s1">fire</span><span class="s2">) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">f</span><span class="s2">.</span><span class="s1">getGo</span><span class="s2">()) {</span>
+                <span class="s1">f</span><span class="s2">.</span><span class="s1">shoot</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">bugFires</span><span class="s2">.</span><span class="s1">length</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">bugFires</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">getGo</span><span class="s2">() &amp;&amp; </span><span class="s1">playing</span><span class="s2">) {</span>
+                <span class="s1">bugFires</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">bugShoot</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s4">//update random helper function</span>
+    <span class="s0">public void </span><span class="s1">update</span><span class="s2">(</span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Integer</span><span class="s2">&gt; </span><span class="s1">arr</span><span class="s2">) {</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">arr</span><span class="s2">.</span><span class="s1">size</span><span class="s2">(); </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">rand</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">arr</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s1">i</span><span class="s2">));</span>
+            <span class="s0">if </span><span class="s2">(!</span><span class="s1">pauseMode</span><span class="s2">) {</span>
+                <span class="s1">addRand</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">updateRandom</span><span class="s2">() {</span>
+        <span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Integer</span><span class="s2">&gt; </span><span class="s1">arr </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s1">Integer r</span><span class="s2">: </span><span class="s1">rand</span><span class="s2">) {</span>
+            <span class="s4">//if bug has been hit or reached its original position, new bug is called to fall</span>
+            <span class="s0">if </span><span class="s2">(!</span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s1">r </span><span class="s2">/ </span><span class="s1">h</span><span class="s2">][</span><span class="s1">r </span><span class="s2">% </span><span class="s1">h</span><span class="s2">].</span><span class="s1">getGo</span><span class="s2">()) {</span>
+                <span class="s1">arr</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">r</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s1">update</span><span class="s2">(</span><span class="s1">arr</span><span class="s2">);</span>
+        <span class="s4">//when nearing endgame, to make sure that at least one bug is falling</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">pauseMode</span><span class="s2">) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">rand</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+                <span class="s1">addRand</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s4">//Update move count for bugs moving at top of the screen</span>
+    <span class="s4">//this affects the new starting X position that the bugs must return to when resetting</span>
+    <span class="s0">public void </span><span class="s1">moveBugs</span><span class="s2">() {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">count </span><span class="s2">% </span><span class="s5">420 </span><span class="s2">== </span><span class="s5">0</span><span class="s2">) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">moveCount </span><span class="s2">% </span><span class="s5">3 </span><span class="s2">== </span><span class="s5">0</span><span class="s2">) {</span>
+                <span class="s1">direction </span><span class="s2">*= -</span><span class="s5">1</span><span class="s2">;</span>
+            <span class="s2">}</span>
+            <span class="s1">moveCount</span><span class="s2">++;</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">hitsHelper</span><span class="s2">(</span><span class="s1">Bug bug</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getDub</span><span class="s2">()){</span>
+            <span class="s1">fighter</span><span class="s2">.</span><span class="s1">setDub</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">pauseMode </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s1">fighter</span><span class="s2">.</span><span class="s1">setStatus</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+            <span class="s1">currFighter</span><span class="s2">++;</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">currFighter </span><span class="s2">== </span><span class="s5">3</span><span class="s2">) {</span>
+            <span class="s1">playing </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s1">gameEnd </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s1">status</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s6">&quot;You lose!&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+        <span class="s4">//resets explosion and sets it next to bug's position</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getTaken</span><span class="s2">()) {</span>
+            <span class="s1">fighterExplosion </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Explosion</span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">(), </span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">(), </span><span class="s1">Color</span><span class="s2">.</span><span class="s1">RED</span><span class="s2">, </span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">bug </span><span class="s2">!= </span><span class="s0">null</span><span class="s2">) {</span>
+                <span class="s1">bugExplosion </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Explosion</span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">(), </span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">(), </span><span class="s1">Color</span><span class="s2">.</span><span class="s1">GREEN</span><span class="s2">, </span><span class="s1">Color</span><span class="s2">.</span><span class="s1">MAGENTA</span><span class="s2">);</span>
+                <span class="s1">bugExplosion</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s4">//iterates through bug grid to check each bug's status</span>
+    <span class="s0">public void </span><span class="s1">checkHits</span><span class="s2">() {</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">j </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">j </span><span class="s2">&lt; </span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s5">0</span><span class="s2">].</span><span class="s1">length</span><span class="s2">; </span><span class="s1">j</span><span class="s2">++) {</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">bugGrid</span><span class="s2">.</span><span class="s1">length</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+                <span class="s1">Bug bug </span><span class="s2">= </span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s1">i</span><span class="s2">][</span><span class="s1">j</span><span class="s2">];</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">status</span><span class="s2">()) {</span>
+
+                    <span class="s4">//makes sure bugs continue firing during endgame</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">endgame </span><span class="s2">&amp;&amp; </span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() &lt; </span><span class="s5">175 </span><span class="s2">&amp;&amp; </span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() &gt; </span><span class="s5">135</span><span class="s2">) {</span>
+                        <span class="s1">setBugFire</span><span class="s2">(</span><span class="s1">bug</span><span class="s2">);</span>
+                    <span class="s2">}</span>
+
+                    <span class="s4">//must be multiple of bug fall timer to work</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">count </span><span class="s2">% </span><span class="s5">420 </span><span class="s2">== </span><span class="s5">0</span><span class="s2">) {</span>
+                        <span class="s0">if </span><span class="s2">(!</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getGo</span><span class="s2">()) {</span>
+                            <span class="s1">bug</span><span class="s2">.</span><span class="s1">move</span><span class="s2">(</span><span class="s1">direction </span><span class="s2">* </span><span class="s5">3</span><span class="s2">);</span>
+                        <span class="s2">}</span>
+                        <span class="s1">bug</span><span class="s2">.</span><span class="s1">updateStartX</span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getStartX</span><span class="s2">() + </span><span class="s1">direction </span><span class="s2">* </span><span class="s5">3</span><span class="s2">);</span>
+                    <span class="s2">}</span>
+
+                    <span class="s4">//bugs fall at 60ms interval timer</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">count </span><span class="s2">% </span><span class="s5">60 </span><span class="s2">== </span><span class="s5">0</span><span class="s2">) {</span>
+                        <span class="s0">if </span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getGo</span><span class="s2">()) {</span>
+                            <span class="s0">try </span><span class="s2">{</span>
+                                <span class="s0">if </span><span class="s2">(</span><span class="s1">bug </span><span class="s2">== </span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s5">0</span><span class="s2">][</span><span class="s1">bugBeam</span><span class="s2">] &amp;&amp; </span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() &gt; </span><span class="s5">400</span><span class="s2">) {</span>
+                                    <span class="s1">bugBeam </span><span class="s2">= -</span><span class="s5">1</span><span class="s2">;</span>
+                                    <span class="s1">bug</span><span class="s2">.</span><span class="s1">setBeam</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+                                <span class="s2">}</span>
+                            <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">ArrayIndexOutOfBoundsException e</span><span class="s2">) {}</span>
+                            <span class="s1">bug</span><span class="s2">.</span><span class="s1">fall</span><span class="s2">();</span>
+                        <span class="s2">}</span>
+                    <span class="s2">}</span>
+
+                    <span class="s0">if </span><span class="s2">(!</span><span class="s1">pauseMode</span><span class="s2">) { </span><span class="s4">//doesn't update when new fighter being set</span>
+                        <span class="s4">// check for if fighter has been taken</span>
+                        <span class="s0">if </span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">taken</span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">)) {</span>
+                            <span class="s1">bug</span><span class="s2">.</span><span class="s1">setBeam</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+                            <span class="s1">fighterBug </span><span class="s2">= </span><span class="s1">bug</span><span class="s2">;</span>
+                            <span class="s1">fighter</span><span class="s2">.</span><span class="s1">setTaken</span><span class="s2">(</span><span class="s0">true</span><span class="s2">, </span><span class="s1">fighterBug</span><span class="s2">);</span>
+                            <span class="s1">takenFighter </span><span class="s2">= </span><span class="s1">fighters</span><span class="s2">[</span><span class="s1">currFighter</span><span class="s2">];</span>
+                            <span class="s1">hitsHelper</span><span class="s2">(</span><span class="s0">null</span><span class="s2">);</span>
+                        <span class="s2">}</span>
+                        <span class="s4">// check for if fighter has been hit</span>
+                        <span class="s0">if </span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">hit</span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">) &amp;&amp; </span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getStatus</span><span class="s2">() &amp;&amp; !</span><span class="s1">pauseMode</span><span class="s2">) {</span>
+                            <span class="s0">if </span><span class="s2">(</span><span class="s1">takenFighter </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; </span><span class="s1">fighterBug </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; </span><span class="s1">bug </span><span class="s2">== </span><span class="s1">fighterBug</span><span class="s2">) {</span>
+                                <span class="s1">takenFighter</span><span class="s2">.</span><span class="s1">taken</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+                                <span class="s1">takenFighter</span><span class="s2">.</span><span class="s1">setStatus</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+                            <span class="s2">}</span>
+                            <span class="s1">hitsHelper</span><span class="s2">(</span><span class="s1">bug</span><span class="s2">);</span>
+                            <span class="s0">if </span><span class="s2">(</span><span class="s1">bugsRemaining </span><span class="s2">!= </span><span class="s5">1</span><span class="s2">) {</span>
+                                <span class="s1">bug</span><span class="s2">.</span><span class="s1">setStatus</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+                                <span class="s1">bugsRemaining</span><span class="s2">--;</span>
+                            <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                                <span class="s1">bug</span><span class="s2">.</span><span class="s1">setY</span><span class="s2">(</span><span class="s5">900</span><span class="s2">);</span>
+                            <span class="s2">}</span>
+                        <span class="s2">}</span>
+                    <span class="s2">}</span>
+                    <span class="s4">//iterates through fire list to see if any bug has been hit</span>
+                    <span class="s0">for </span><span class="s2">(</span><span class="s1">Fire f </span><span class="s2">:</span>
+                            <span class="s1">fire</span><span class="s2">) {</span>
+                        <span class="s0">if </span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">status</span><span class="s2">() &amp;&amp; </span><span class="s1">f</span><span class="s2">.</span><span class="s1">hit</span><span class="s2">(</span><span class="s1">bug</span><span class="s2">) &amp;&amp; </span><span class="s1">f</span><span class="s2">.</span><span class="s1">getGo</span><span class="s2">()) {</span>
+                            <span class="s1">hits</span><span class="s2">++;</span>
+                            <span class="s1">bug</span><span class="s2">.</span><span class="s1">beenHit</span><span class="s2">();</span>
+                            <span class="s0">try </span><span class="s2">{</span>
+                                <span class="s0">if </span><span class="s2">(</span><span class="s1">bug </span><span class="s2">== </span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s5">0</span><span class="s2">][</span><span class="s1">bugBeam</span><span class="s2">] &amp;&amp; !</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">status</span><span class="s2">()) {</span>
+                                    <span class="s0">int </span><span class="s1">c </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+                                    <span class="s0">while </span><span class="s2">(!</span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s5">0</span><span class="s2">][</span><span class="s1">bugBeam</span><span class="s2">].</span><span class="s1">status</span><span class="s2">() &amp;&amp; </span><span class="s1">c </span><span class="s2">&lt; </span><span class="s5">8</span><span class="s2">) {</span>
+                                        <span class="s1">bugBeam </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">)(</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">random</span><span class="s2">() * </span><span class="s5">8</span><span class="s2">);</span>
+                                        <span class="s1">c</span><span class="s2">++;</span>
+                                    <span class="s2">}</span>
+                                <span class="s2">}</span>
+                            <span class="s2">} </span><span class="s0">catch </span><span class="s2">(</span><span class="s1">ArrayIndexOutOfBoundsException e</span><span class="s2">){}</span>
+
+                            <span class="s0">if </span><span class="s2">(</span><span class="s1">takenFighter </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; </span><span class="s1">bug </span><span class="s2">== </span><span class="s1">fighterBug </span><span class="s2">&amp;&amp; !</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">status</span><span class="s2">()) {</span>
+                                <span class="s1">takenFighter</span><span class="s2">.</span><span class="s1">setDub</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+                                <span class="s1">pauseMode </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                            <span class="s2">}</span>
+
+                            <span class="s1">f</span><span class="s2">.</span><span class="s1">restart</span><span class="s2">();</span>
+                            <span class="s1">f</span><span class="s2">.</span><span class="s1">setGo</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+                            <span class="s4">//updates points</span>
+                            <span class="s1">points </span><span class="s2">+= </span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getPoints</span><span class="s2">();</span>
+                            <span class="s0">if </span><span class="s2">(!</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">status</span><span class="s2">()) {</span>
+                                <span class="s1">bugsRemaining</span><span class="s2">--;</span>
+                                <span class="s4">//checks if game is over or not</span>
+                                <span class="s0">if </span><span class="s2">(</span><span class="s1">bugsRemaining </span><span class="s2">== </span><span class="s5">0</span><span class="s2">) {</span>
+                                    <span class="s1">playing </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+                                    <span class="s1">gameEnd </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                                    <span class="s1">win </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                                    <span class="s1">status</span><span class="s2">.</span><span class="s1">setText</span><span class="s2">(</span><span class="s6">&quot;You win!&quot;</span><span class="s2">);</span>
+                                <span class="s2">}</span>
+                                <span class="s4">//resets explosion and sets it next to bug's position</span>
+                                <span class="s1">bugExplosion </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Explosion</span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">(), </span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">(), </span><span class="s1">Color</span><span class="s2">.</span><span class="s1">GREEN</span><span class="s2">, </span><span class="s1">Color</span><span class="s2">.</span><span class="s1">MAGENTA</span><span class="s2">, </span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getPoints</span><span class="s2">());</span>
+                                <span class="s1">bugExplosion</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+                            <span class="s2">}</span>
+                        <span class="s2">}</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">bugFires</span><span class="s2">.</span><span class="s1">length</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">bugFires</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">hit</span><span class="s2">(</span><span class="s1">fighter</span><span class="s2">) &amp;&amp; </span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getStatus</span><span class="s2">() &amp;&amp; !</span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getTaken</span><span class="s2">() &amp;&amp; !</span><span class="s1">pauseMode</span><span class="s2">) {</span>
+                <span class="s1">hitsHelper</span><span class="s2">(</span><span class="s0">null</span><span class="s2">);</span>
+                <span class="s1">bugFires</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">setGo</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+                <span class="s1">bugFires</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">restart</span><span class="s2">();</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">updateHighScore</span><span class="s2">() {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">gameEnd</span><span class="s2">) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">points </span><span class="s2">&gt; </span><span class="s1">highScore</span><span class="s2">) {</span>
+                <span class="s1">highScore </span><span class="s2">= </span><span class="s1">points</span><span class="s2">;</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">boolean </span><span class="s1">r </span><span class="s2">= </span><span class="s0">true</span><span class="s2">; </span><span class="s4">//only updates fighter once</span>
+    <span class="s0">public void </span><span class="s1">updatePause</span><span class="s2">() {</span>
+        <span class="s4">// and new fighter takes its place</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">endgame</span><span class="s2">) {</span>
+            <span class="s1">endgame </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">j </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">j </span><span class="s2">&lt; </span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s5">0</span><span class="s2">].</span><span class="s1">length</span><span class="s2">; </span><span class="s1">j</span><span class="s2">++) {</span>
+                <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">bugGrid</span><span class="s2">.</span><span class="s1">length</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+                    <span class="s1">Bug b </span><span class="s2">= </span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s1">i</span><span class="s2">][</span><span class="s1">j</span><span class="s2">];</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">b</span><span class="s2">.</span><span class="s1">status</span><span class="s2">()) {</span>
+                        <span class="s1">b</span><span class="s2">.</span><span class="s1">setSpeed</span><span class="s2">(</span><span class="s1">b</span><span class="s2">.</span><span class="s1">getSpeed</span><span class="s2">() - </span><span class="s5">3</span><span class="s2">);</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">fighterBug </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; </span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() &lt;= </span><span class="s1">fighterBug</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">()) {</span>
+            <span class="s1">fighterBug</span><span class="s2">.</span><span class="s1">setBeamNum</span><span class="s2">(</span><span class="s5">0</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">takenFighter </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; </span><span class="s1">takenFighter</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() &gt;= </span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() - </span><span class="s1">HEIGHT</span><span class="s2">/</span><span class="s5">2 </span><span class="s2">&amp;&amp; </span><span class="s1">takenFighter</span><span class="s2">.</span><span class="s1">getDub</span><span class="s2">()) {</span>
+            <span class="s1">fighter</span><span class="s2">.</span><span class="s1">setDub</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+            <span class="s1">takenFighter</span><span class="s2">.</span><span class="s1">taken</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+            <span class="s1">takenFighter</span><span class="s2">.</span><span class="s1">setStatus</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+            <span class="s1">takenFighter</span><span class="s2">.</span><span class="s1">setDub</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">rand</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">() &amp;&amp; (</span><span class="s1">takenFighter </span><span class="s2">== </span><span class="s0">null </span><span class="s2">|| </span><span class="s1">fighter</span><span class="s2">.</span><span class="s1">getDub</span><span class="s2">() || !</span><span class="s1">takenFighter</span><span class="s2">.</span><span class="s1">getDub</span><span class="s2">())) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">r</span><span class="s2">) {</span>
+                <span class="s1">fighter </span><span class="s2">= </span><span class="s1">fighters</span><span class="s2">[</span><span class="s1">currFighter</span><span class="s2">];</span>
+                <span class="s1">fighter</span><span class="s2">.</span><span class="s1">setX</span><span class="s2">(</span><span class="s5">428</span><span class="s2">);</span>
+                <span class="s1">fighter</span><span class="s2">.</span><span class="s1">setY</span><span class="s2">(</span><span class="s5">670</span><span class="s2">);</span>
+                <span class="s1">r </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s2">}</span>
+            <span class="s0">int </span><span class="s1">num </span><span class="s2">= </span><span class="s5">3</span><span class="s2">;</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">bugsRemaining </span><span class="s2">&lt; </span><span class="s5">3</span><span class="s2">) {</span>
+                <span class="s1">num </span><span class="s2">= </span><span class="s1">bugsRemaining</span><span class="s2">;</span>
+            <span class="s2">}</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">count </span><span class="s2">% </span><span class="s5">2400 </span><span class="s2">== </span><span class="s5">0</span><span class="s2">) { </span><span class="s4">//gives a sec before running</span>
+                <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">num</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+                    <span class="s1">addRand</span><span class="s2">(); </span><span class="s4">//resets falling bugs</span>
+                <span class="s2">}</span>
+                <span class="s1">pauseMode </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+                <span class="s1">r </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+
+    <span class="s3">/**</span>
+     <span class="s3">* This method is called every time the timer defined in the constructor</span>
+     <span class="s3">* triggers.</span>
+     <span class="s3">*/</span>
+    <span class="s0">public void </span><span class="s1">tick</span><span class="s2">() {</span>
+
+        <span class="s4">//count allows for objects to react in slightly different time frames</span>
+        <span class="s1">count </span><span class="s2">+= </span><span class="s1">INTERVAL</span><span class="s2">;</span>
+
+        <span class="s1">background</span><span class="s2">();</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">pauseMode</span><span class="s2">) {</span>
+            <span class="s1">updateFighter</span><span class="s2">();</span>
+        <span class="s2">}</span>
+        <span class="s1">checkFire</span><span class="s2">();</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">playing</span><span class="s2">) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">pauseMode</span><span class="s2">) {</span>
+                <span class="s1">updatePause</span><span class="s2">();</span>
+            <span class="s2">}</span>
+            <span class="s0">if </span><span class="s2">(!</span><span class="s1">endgame</span><span class="s2">) {</span>
+                <span class="s1">updateRandom</span><span class="s2">();</span>
+            <span class="s2">}</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">bugsRemaining </span><span class="s2">&lt;= </span><span class="s5">3 </span><span class="s2">&amp;&amp; !</span><span class="s1">endgame </span><span class="s2">&amp;&amp; !</span><span class="s1">pauseMode</span><span class="s2">) {</span>
+                <span class="s1">endgame </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                <span class="s1">bugBeam </span><span class="s2">= -</span><span class="s5">1</span><span class="s2">;</span>
+                <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">bugGrid</span><span class="s2">.</span><span class="s1">length</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+                    <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">j </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">j </span><span class="s2">&lt; </span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s5">0</span><span class="s2">].</span><span class="s1">length</span><span class="s2">; </span><span class="s1">j</span><span class="s2">++) {</span>
+                        <span class="s1">Bug bug </span><span class="s2">= </span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s1">i</span><span class="s2">][</span><span class="s1">j</span><span class="s2">];</span>
+                        <span class="s0">if </span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">status</span><span class="s2">()) {</span>
+                            <span class="s1">bug</span><span class="s2">.</span><span class="s1">setSpeed</span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">getSpeed</span><span class="s2">() + </span><span class="s5">3</span><span class="s2">);</span>
+                        <span class="s2">}</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+            <span class="s1">moveBugs</span><span class="s2">();</span>
+            <span class="s1">checkHits</span><span class="s2">();</span>
+            <span class="s1">updateHighScore</span><span class="s2">();</span>
+        <span class="s2">}</span>
+        <span class="s4">// update the display</span>
+        <span class="s1">repaint</span><span class="s2">();</span>
+    <span class="s2">}</span>
+
+
+    <span class="s4">//draw screen</span>
+    <span class="s0">int </span><span class="s1">c </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">paintComponent</span><span class="s2">(</span><span class="s1">Graphics g</span><span class="s2">) {</span>
+        <span class="s0">super</span><span class="s2">.</span><span class="s1">paintComponent</span><span class="s2">(</span><span class="s1">g</span><span class="s2">);</span>
+        <span class="s4">//background</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s5">150</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">dots</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">draw</span><span class="s2">(</span><span class="s1">g</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s4">//game objects</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">gameEnd</span><span class="s2">) {</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">bugFires</span><span class="s2">.</span><span class="s1">length</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+                <span class="s1">bugFires</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">draw</span><span class="s2">(</span><span class="s1">g</span><span class="s2">);</span>
+            <span class="s2">}</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s1">Fire f </span><span class="s2">:</span>
+                    <span class="s1">fire</span><span class="s2">) {</span>
+                <span class="s1">f</span><span class="s2">.</span><span class="s1">draw</span><span class="s2">(</span><span class="s1">g</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">bugGrid</span><span class="s2">.</span><span class="s1">length</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">j </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">j </span><span class="s2">&lt; </span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s5">0</span><span class="s2">].</span><span class="s1">length</span><span class="s2">; </span><span class="s1">j</span><span class="s2">++) {</span>
+                <span class="s1">Bug bug </span><span class="s2">= </span><span class="s1">bugGrid</span><span class="s2">[</span><span class="s1">bugGrid</span><span class="s2">.</span><span class="s1">length </span><span class="s2">- </span><span class="s5">1 </span><span class="s2">- </span><span class="s1">i</span><span class="s2">][</span><span class="s1">j</span><span class="s2">];</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">bug</span><span class="s2">.</span><span class="s1">status</span><span class="s2">()) {</span>
+                    <span class="s1">bug</span><span class="s2">.</span><span class="s1">draw</span><span class="s2">(</span><span class="s1">g</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s4">//start/pause screen</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">playing </span><span class="s2">&amp;&amp; !</span><span class="s1">gameEnd</span><span class="s2">) {</span>
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s6">&quot;Mont Blanc&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">ITALIC</span><span class="s2">, </span><span class="s5">60</span><span class="s2">));</span>
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">drawString</span><span class="s2">(</span><span class="s6">&quot;Galaga 2.0&quot;</span><span class="s2">, </span><span class="s5">250</span><span class="s2">, </span><span class="s1">GAME_HEIGHT </span><span class="s2">/ </span><span class="s5">2 </span><span class="s2">- </span><span class="s5">20</span><span class="s2">);</span>
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">RED</span><span class="s2">);</span>
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s6">&quot;Mont Blanc&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">ITALIC</span><span class="s2">, </span><span class="s5">20</span><span class="s2">));</span>
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">drawString</span><span class="s2">(</span><span class="s6">&quot;Press Space to Begin&quot;</span><span class="s2">, </span><span class="s5">300</span><span class="s2">, </span><span class="s1">GAME_HEIGHT </span><span class="s2">/ </span><span class="s5">2 </span><span class="s2">+ </span><span class="s5">25</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s4">//during pause mode</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">pauseMode </span><span class="s2">&amp;&amp; !</span><span class="s1">gameEnd </span><span class="s2">&amp;&amp; </span><span class="s1">playing</span><span class="s2">) {</span>
+            <span class="s1">String s </span><span class="s2">= </span><span class="s0">new </span><span class="s1">String</span><span class="s2">();</span>
+            <span class="s0">int </span><span class="s1">x </span><span class="s2">= </span><span class="s5">0</span><span class="s2">;</span>
+
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">takenFighter </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; </span><span class="s1">takenFighter</span><span class="s2">.</span><span class="s1">getTaken</span><span class="s2">() &amp;&amp; !</span><span class="s1">takenFighter</span><span class="s2">.</span><span class="s1">getDub</span><span class="s2">()) {</span>
+                <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">RED</span><span class="s2">);</span>
+                <span class="s1">s </span><span class="s2">= </span><span class="s6">&quot;fighter taken&quot;</span><span class="s2">;</span>
+                <span class="s1">x </span><span class="s2">= </span><span class="s5">330</span><span class="s2">;</span>
+            <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+                <span class="s1">x </span><span class="s2">= </span><span class="s5">210</span><span class="s2">;</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">count </span><span class="s2">% </span><span class="s5">300 </span><span class="s2">== </span><span class="s5">0</span><span class="s2">) {</span>
+                    <span class="s1">c</span><span class="s2">++;</span>
+                <span class="s2">}</span>
+                <span class="s1">s </span><span class="s2">= </span><span class="s6">&quot;bugs resetting, please wait&quot;</span><span class="s2">;</span>
+                <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">c </span><span class="s2">% </span><span class="s5">4</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+                    <span class="s1">s </span><span class="s2">+= </span><span class="s6">&quot;.&quot;</span><span class="s2">;</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s6">&quot;Mont Blanc&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">ITALIC</span><span class="s2">, </span><span class="s5">32</span><span class="s2">));</span>
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">drawString</span><span class="s2">(</span><span class="s1">s</span><span class="s2">, </span><span class="s1">x</span><span class="s2">, </span><span class="s1">GAME_HEIGHT </span><span class="s2">/ </span><span class="s5">2 </span><span class="s2">- </span><span class="s5">50</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s4">//screen printed after game ends</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">gameEnd</span><span class="s2">) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">win</span><span class="s2">) {</span>
+                <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+                <span class="s1">g</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s6">&quot;Mont Blanc&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s5">40</span><span class="s2">));</span>
+                <span class="s1">g</span><span class="s2">.</span><span class="s1">drawString</span><span class="s2">(</span><span class="s6">&quot;You Win!!&quot;</span><span class="s2">, </span><span class="s5">315</span><span class="s2">, </span><span class="s1">GAME_HEIGHT </span><span class="s2">/ </span><span class="s5">2 </span><span class="s2">- </span><span class="s5">50</span><span class="s2">);</span>
+            <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+                <span class="s1">g</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s6">&quot;Mont Blanc&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">BOLD</span><span class="s2">, </span><span class="s5">40</span><span class="s2">));</span>
+                <span class="s1">g</span><span class="s2">.</span><span class="s1">drawString</span><span class="s2">(</span><span class="s6">&quot;Womp Womp&quot;</span><span class="s2">, </span><span class="s5">315</span><span class="s2">, </span><span class="s1">GAME_HEIGHT </span><span class="s2">/ </span><span class="s5">2 </span><span class="s2">- </span><span class="s5">50</span><span class="s2">);</span>
+            <span class="s2">}</span>
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">RED</span><span class="s2">);</span>
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s6">&quot;Mont Blanc&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">ITALIC</span><span class="s2">, </span><span class="s5">20</span><span class="s2">));</span>
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">drawString</span><span class="s2">(</span><span class="s6">&quot;Points = &quot; </span><span class="s2">+ </span><span class="s1">points</span><span class="s2">, </span><span class="s5">315</span><span class="s2">, </span><span class="s1">GAME_HEIGHT </span><span class="s2">/ </span><span class="s5">2</span><span class="s2">);</span>
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">drawString</span><span class="s2">(</span><span class="s6">&quot;High Score = &quot; </span><span class="s2">+ </span><span class="s1">highScore</span><span class="s2">, </span><span class="s5">315</span><span class="s2">, </span><span class="s1">GAME_HEIGHT </span><span class="s2">/ </span><span class="s5">2 </span><span class="s2">+ </span><span class="s5">40</span><span class="s2">);</span>
+            <span class="s1">g</span><span class="s2">.</span><span class="s1">drawString</span><span class="s2">(</span><span class="s6">&quot;Hit Ratio = &quot; </span><span class="s2">+ (</span><span class="s1">hits </span><span class="s2">* </span><span class="s5">100</span><span class="s2">) / </span><span class="s1">total </span><span class="s2">+ </span><span class="s6">&quot;%&quot;</span><span class="s2">, </span><span class="s5">315</span><span class="s2">, </span><span class="s1">GAME_HEIGHT </span><span class="s2">/ </span><span class="s5">2 </span><span class="s2">+ </span><span class="s5">80</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s4">//draw fighters</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s5">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">fighters</span><span class="s2">.</span><span class="s1">length</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">fighters</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">getStatus</span><span class="s2">()) {</span>
+                <span class="s1">fighters</span><span class="s2">[</span><span class="s1">i</span><span class="s2">].</span><span class="s1">draw</span><span class="s2">(</span><span class="s1">g</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s4">//effects for when bug or fighter is killed</span>
+        <span class="s1">fighterExplosion</span><span class="s2">.</span><span class="s1">draw</span><span class="s2">(</span><span class="s1">g</span><span class="s2">);</span>
+        <span class="s1">bugExplosion</span><span class="s2">.</span><span class="s1">draw</span><span class="s2">(</span><span class="s1">g</span><span class="s2">);</span>
+
+        <span class="s4">//status at bottom of the page</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">setColor</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s6">&quot;Mont Blanc&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">ITALIC</span><span class="s2">, </span><span class="s5">15</span><span class="s2">));</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">drawString</span><span class="s2">(</span><span class="s6">&quot;Lives: &quot; </span><span class="s2">+ (</span><span class="s5">3 </span><span class="s2">- </span><span class="s1">currFighter</span><span class="s2">), </span><span class="s5">30</span><span class="s2">, </span><span class="s1">GAME_HEIGHT </span><span class="s2">- </span><span class="s5">105</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">drawString</span><span class="s2">(</span><span class="s6">&quot;Points: &quot; </span><span class="s2">+ </span><span class="s1">points</span><span class="s2">, </span><span class="s1">GAME_WIDTH </span><span class="s2">- </span><span class="s5">140</span><span class="s2">, </span><span class="s1">GAME_HEIGHT </span><span class="s2">- </span><span class="s5">130</span><span class="s2">);</span>
+        <span class="s1">g</span><span class="s2">.</span><span class="s1">drawString</span><span class="s2">(</span><span class="s6">&quot;High Score: &quot; </span><span class="s2">+ </span><span class="s1">highScore</span><span class="s2">, </span><span class="s1">GAME_WIDTH </span><span class="s2">- </span><span class="s5">140</span><span class="s2">, </span><span class="s1">GAME_HEIGHT </span><span class="s2">- </span><span class="s5">105</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s4">//helper functions</span>
+    <span class="s0">public void </span><span class="s1">setPlaying</span><span class="s2">(</span><span class="s0">boolean </span><span class="s1">b</span><span class="s2">) {</span>
+        <span class="s1">playing </span><span class="s2">= </span><span class="s1">b</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+<span class="s2">}</span></pre>
+</body>
+</html>

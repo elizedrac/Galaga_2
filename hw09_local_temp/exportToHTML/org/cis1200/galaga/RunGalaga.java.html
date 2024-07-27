@@ -1,0 +1,127 @@
+<html>
+<head>
+<title>RunGalaga.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #5f826b; font-style: italic;}
+.s5 { color: #6aab73;}
+.s6 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+RunGalaga.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">org</span><span class="s2">.</span><span class="s1">cis1200</span><span class="s2">.</span><span class="s1">galaga</span><span class="s2">;</span>
+
+<span class="s3">// imports necessary libraries for Java swing</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.</span><span class="s1">event</span><span class="s2">.</span><span class="s1">KeyEvent</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">xml</span><span class="s2">.</span><span class="s1">crypto</span><span class="s2">.</span><span class="s1">dsig</span><span class="s2">.</span><span class="s1">keyinfo</span><span class="s2">.</span><span class="s1">KeyValue</span><span class="s2">;</span>
+
+<span class="s4">/**</span>
+ <span class="s4">* Game Main class that specifies the frame and widgets of the GUI</span>
+ <span class="s4">*/</span>
+<span class="s0">public class </span><span class="s1">RunGalaga </span><span class="s0">implements </span><span class="s1">Runnable </span><span class="s2">{</span>
+    <span class="s0">public void </span><span class="s1">keyClose</span><span class="s2">(</span><span class="s0">int </span><span class="s1">k</span><span class="s2">, </span><span class="s1">GameCourt court</span><span class="s2">, </span><span class="s1">JFrame frame</span><span class="s2">) {</span>
+        <span class="s1">court</span><span class="s2">.</span><span class="s1">setKeys</span><span class="s2">(</span><span class="s1">k</span><span class="s2">);</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">setVisible</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">pause</span><span class="s2">(</span><span class="s1">GameCourt court</span><span class="s2">, </span><span class="s1">JFrame frame</span><span class="s2">) {</span>
+        <span class="s1">court</span><span class="s2">.</span><span class="s1">setPlaying</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">court</span><span class="s2">.</span><span class="s1">repaint</span><span class="s2">();</span>
+        <span class="s1">court</span><span class="s2">.</span><span class="s1">requestFocusInWindow</span><span class="s2">();</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">setVisible</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+
+    <span class="s0">public void </span><span class="s1">run</span><span class="s2">() {</span>
+        <span class="s0">final </span><span class="s1">JFrame frame </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JFrame</span><span class="s2">(</span><span class="s5">&quot;Galaga2&quot;</span><span class="s2">);</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">setLocation</span><span class="s2">(</span><span class="s6">320</span><span class="s2">, </span><span class="s6">50</span><span class="s2">);</span>
+
+        <span class="s3">// Status panel</span>
+        <span class="s0">final </span><span class="s1">JPanel status_panel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">();</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">status_panel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">SOUTH</span><span class="s2">);</span>
+        <span class="s0">final </span><span class="s1">JLabel status </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JLabel</span><span class="s2">(</span><span class="s5">&quot;Running&quot;</span><span class="s2">);</span>
+        <span class="s1">status_panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">status</span><span class="s2">);</span>
+
+        <span class="s3">// Main playing area</span>
+        <span class="s0">final </span><span class="s1">GameCourt court </span><span class="s2">= </span><span class="s0">new </span><span class="s1">GameCourt</span><span class="s2">(</span><span class="s1">status</span><span class="s2">);</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">court</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+
+        <span class="s3">// Reset button</span>
+        <span class="s0">final </span><span class="s1">JPanel control_panel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">();</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">control_panel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">NORTH</span><span class="s2">);</span>
+
+        <span class="s3">// Note here that when we add an action listener to the reset button, we</span>
+        <span class="s3">// define it as an anonymous inner class that is an instance of</span>
+        <span class="s3">// ActionListener with its actionPerformed() method overridden. When the</span>
+        <span class="s3">// button is pressed, actionPerformed() will be called.</span>
+        <span class="s0">final </span><span class="s1">JButton reset </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s5">&quot;Reset&quot;</span><span class="s2">);</span>
+        <span class="s1">reset</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s1">e -&gt; court</span><span class="s2">.</span><span class="s1">reset</span><span class="s2">());</span>
+        <span class="s1">control_panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">reset</span><span class="s2">);</span>
+
+
+        <span class="s3">//instruction frame</span>
+        <span class="s0">final </span><span class="s1">JFrame frame1 </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JFrame</span><span class="s2">(</span><span class="s5">&quot;Galaga2&quot;</span><span class="s2">);</span>
+        <span class="s1">frame1</span><span class="s2">.</span><span class="s1">setLocation</span><span class="s2">(</span><span class="s6">540</span><span class="s2">, </span><span class="s6">300</span><span class="s2">);</span>
+
+        <span class="s3">// Close button</span>
+        <span class="s0">final </span><span class="s1">JPanel control_panel1 </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">();</span>
+        <span class="s1">frame1</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">control_panel1</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">SOUTH</span><span class="s2">);</span>
+
+        <span class="s0">final </span><span class="s1">JButton close </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s5">&quot;Up Arrow Shoot Key&quot;</span><span class="s2">);</span>
+        <span class="s1">close</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s1">e -&gt; </span><span class="s0">this</span><span class="s2">.</span><span class="s1">keyClose</span><span class="s2">(</span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_UP</span><span class="s2">, </span><span class="s1">court</span><span class="s2">, </span><span class="s1">frame1</span><span class="s2">));</span>
+        <span class="s1">control_panel1</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">close</span><span class="s2">);</span>
+
+        <span class="s0">final </span><span class="s1">JButton changeKeys </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s5">&quot;W Shoot Key&quot;</span><span class="s2">);</span>
+        <span class="s1">changeKeys</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s1">e -&gt; </span><span class="s0">this</span><span class="s2">.</span><span class="s1">keyClose</span><span class="s2">(</span><span class="s1">KeyEvent</span><span class="s2">.</span><span class="s1">VK_W</span><span class="s2">, </span><span class="s1">court</span><span class="s2">, </span><span class="s1">frame1</span><span class="s2">));</span>
+        <span class="s1">control_panel1</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">changeKeys</span><span class="s2">);</span>
+
+
+        <span class="s3">//fix (may pause/unpause feature)</span>
+        <span class="s0">final </span><span class="s1">JButton instructions </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JButton</span><span class="s2">(</span><span class="s5">&quot;Instructions&quot;</span><span class="s2">);</span>
+        <span class="s1">instructions</span><span class="s2">.</span><span class="s1">addActionListener</span><span class="s2">(</span><span class="s1">e -&gt; </span><span class="s0">this</span><span class="s2">.</span><span class="s1">pause</span><span class="s2">(</span><span class="s1">court</span><span class="s2">, </span><span class="s1">frame1</span><span class="s2">));</span>
+        <span class="s1">control_panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">instructions</span><span class="s2">);</span>
+
+        <span class="s3">// Instruction panel</span>
+        <span class="s0">final </span><span class="s1">JPanel instruction_panel </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JPanel</span><span class="s2">();</span>
+        <span class="s1">frame1</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">instruction_panel</span><span class="s2">, </span><span class="s1">BorderLayout</span><span class="s2">.</span><span class="s1">CENTER</span><span class="s2">);</span>
+        <span class="s0">final </span><span class="s1">JTextArea instructionsText </span><span class="s2">= </span><span class="s0">new </span><span class="s1">JTextArea</span><span class="s2">(</span><span class="s5">&quot;Instructions: This game follows the &quot; </span><span class="s2">+</span>
+                <span class="s5">&quot;basic structure</span><span class="s0">\n</span><span class="s5">of the classic Galaga arcade game.</span><span class="s0">\n\n</span><span class="s5">&quot; </span><span class="s2">+</span>
+                <span class="s5">&quot;Avoid the bugs at the topic of the screen that</span><span class="s0">\n</span><span class="s5">&quot; </span><span class="s2">+</span>
+                <span class="s5">&quot;will fall in groups of three. If you get hit by a bug</span><span class="s0">\n</span><span class="s5">&quot; </span><span class="s2">+</span>
+                <span class="s5">&quot;or one of its bullets you lose and the game is over.</span><span class="s0">\n\n</span><span class="s5">&quot; </span><span class="s2">+</span>
+                <span class="s5">&quot;Press the left and right arrow keys to move your fighter.</span><span class="s0">\n</span><span class="s5">&quot; </span><span class="s2">+</span>
+                <span class="s5">&quot;Press the up arrow key to shoot and hit the bugs. Note</span><span class="s0">\n</span><span class="s5">&quot; </span><span class="s2">+</span>
+                <span class="s5">&quot;that the green bugs must be hit twice to die. To win</span><span class="s0">\n</span><span class="s5">you have to &quot; </span><span class="s2">+</span>
+                <span class="s5">&quot;kill all of the bugs.</span><span class="s0">\n\n</span><span class="s5">&quot; </span><span class="s2">+</span>
+                <span class="s5">&quot;Press the space bar to begin playing or pause/unpause</span><span class="s0">\n</span><span class="s5">at any time. &quot; </span><span class="s2">+</span>
+                        <span class="s5">&quot;Press the reset button or r key to restart at</span><span class="s0">\n</span><span class="s5">any time.&quot;</span><span class="s2">);</span>
+        <span class="s1">instructionsText</span><span class="s2">.</span><span class="s1">setEditable</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+        <span class="s1">instructionsText</span><span class="s2">.</span><span class="s1">setFont</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Font</span><span class="s2">(</span><span class="s5">&quot;Mont Blanc&quot;</span><span class="s2">, </span><span class="s1">Font</span><span class="s2">.</span><span class="s1">PLAIN</span><span class="s2">, </span><span class="s6">14</span><span class="s2">));</span>
+        <span class="s1">instructionsText</span><span class="s2">.</span><span class="s1">setCaretColor</span><span class="s2">(</span><span class="s1">Color</span><span class="s2">.</span><span class="s1">WHITE</span><span class="s2">);</span>
+        <span class="s1">instruction_panel</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">instructionsText</span><span class="s2">);</span>
+
+        <span class="s3">// Put the frames on the screen</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">setSize</span><span class="s2">(</span><span class="s1">GameCourt</span><span class="s2">.</span><span class="s1">GAME_WIDTH</span><span class="s2">,</span><span class="s1">GameCourt</span><span class="s2">.</span><span class="s1">GAME_HEIGHT</span><span class="s2">);</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">setDefaultCloseOperation</span><span class="s2">(</span><span class="s1">JFrame</span><span class="s2">.</span><span class="s1">EXIT_ON_CLOSE</span><span class="s2">);</span>
+        <span class="s1">frame</span><span class="s2">.</span><span class="s1">setVisible</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+
+        <span class="s1">frame1</span><span class="s2">.</span><span class="s1">setSize</span><span class="s2">(</span><span class="s1">GameCourt</span><span class="s2">.</span><span class="s1">GAME_WIDTH </span><span class="s2">/ </span><span class="s6">2</span><span class="s2">, </span><span class="s1">GameCourt</span><span class="s2">.</span><span class="s1">GAME_HEIGHT </span><span class="s2">/ </span><span class="s6">2</span><span class="s2">);</span>
+        <span class="s1">frame1</span><span class="s2">.</span><span class="s1">setVisible</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+
+        <span class="s3">// Start game</span>
+        <span class="s1">court</span><span class="s2">.</span><span class="s1">reset</span><span class="s2">();</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<html>
+<head>
+<title>GalagaObj.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+GalagaObj.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">org</span><span class="s2">.</span><span class="s1">cis1200</span><span class="s2">.</span><span class="s1">galaga</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+
+<span class="s0">public abstract class </span><span class="s1">GalagaObj </span><span class="s2">{</span>
+    <span class="s0">public static final int </span><span class="s1">WIDTH </span><span class="s2">= </span><span class="s3">26</span><span class="s2">;</span>
+    <span class="s0">public static final int </span><span class="s1">HEIGHT </span><span class="s2">= </span><span class="s3">28</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">height</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">width</span><span class="s2">;</span>
+    <span class="s4">//position variables</span>
+    <span class="s0">private int </span><span class="s1">x</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">y</span><span class="s2">;</span>
+
+    <span class="s0">private int </span><span class="s1">startX</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">startY</span><span class="s2">;</span>
+
+    <span class="s0">private boolean </span><span class="s1">go</span><span class="s2">;</span>
+
+    <span class="s0">private double </span><span class="s1">angle </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">GalagaObj</span><span class="s2">(</span><span class="s0">int </span><span class="s1">x</span><span class="s2">, </span><span class="s0">int </span><span class="s1">y</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">x </span><span class="s2">= </span><span class="s1">x</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">y </span><span class="s2">= </span><span class="s1">y</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">startX </span><span class="s2">= </span><span class="s1">x</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">startY </span><span class="s2">= </span><span class="s1">y</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">go </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">width </span><span class="s2">= </span><span class="s1">WIDTH</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">height </span><span class="s2">= </span><span class="s1">HEIGHT</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public double </span><span class="s1">getAngle</span><span class="s2">() {</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">angle</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setAngle</span><span class="s2">(</span><span class="s0">double </span><span class="s1">d</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">angle </span><span class="s2">= </span><span class="s1">d</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setX</span><span class="s2">(</span><span class="s0">int </span><span class="s1">n</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">x </span><span class="s2">= </span><span class="s1">n</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setY</span><span class="s2">(</span><span class="s0">int </span><span class="s1">n</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">y </span><span class="s2">= </span><span class="s1">n</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">restart</span><span class="s2">() {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">x </span><span class="s2">= </span><span class="s1">startX</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">y </span><span class="s2">= </span><span class="s1">startY</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public int </span><span class="s1">getX</span><span class="s2">() {</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">x</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public int </span><span class="s1">getY</span><span class="s2">() {</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">y</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">moveX</span><span class="s2">(</span><span class="s0">int </span><span class="s1">v</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+= </span><span class="s1">v</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">moveY</span><span class="s2">(</span><span class="s0">int </span><span class="s1">v</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+= </span><span class="s1">v</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public boolean </span><span class="s1">getGo</span><span class="s2">() {</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">go</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setGo</span><span class="s2">(</span><span class="s0">boolean </span><span class="s1">b</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">go </span><span class="s2">= </span><span class="s1">b</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setWidth</span><span class="s2">(</span><span class="s0">int </span><span class="s1">x</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">width </span><span class="s2">= </span><span class="s1">x</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public int </span><span class="s1">getWidth</span><span class="s2">() {</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">width</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public void </span><span class="s1">setHeight</span><span class="s2">(</span><span class="s0">int </span><span class="s1">x</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">height </span><span class="s2">= </span><span class="s1">x</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public int </span><span class="s1">getHeight</span><span class="s2">() {</span>
+        <span class="s0">return this</span><span class="s2">.</span><span class="s1">height</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+<span class="s4">//    public boolean hit(GalagaObj that) {</span>
+<span class="s4">//        return (this.getX() + this.WIDTH &gt; that.getX()</span>
+<span class="s4">//                &amp;&amp; this.getY() + this.HEIGHT &gt; that.getY()</span>
+<span class="s4">//                &amp;&amp; that.getX() + that.WIDTH &gt; this.getX()</span>
+<span class="s4">//                &amp;&amp; that.getY() + that.HEIGHT &gt; this.getY());</span>
+<span class="s4">//    }</span>
+
+    <span class="s0">public boolean </span><span class="s1">hit</span><span class="s2">(</span><span class="s1">GalagaObj that</span><span class="s2">) {</span>
+        <span class="s0">return </span><span class="s2">(</span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() + </span><span class="s0">this</span><span class="s2">.</span><span class="s1">width </span><span class="s2">/ </span><span class="s3">2 </span><span class="s2">+ </span><span class="s1">that</span><span class="s2">.</span><span class="s1">width </span><span class="s2">/ </span><span class="s3">2 </span><span class="s2">&gt;= </span><span class="s1">that</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">()</span>
+                <span class="s2">&amp;&amp; </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() + </span><span class="s0">this</span><span class="s2">.</span><span class="s1">height </span><span class="s2">/ </span><span class="s3">2 </span><span class="s2">+ </span><span class="s1">that</span><span class="s2">.</span><span class="s1">height </span><span class="s2">/ </span><span class="s3">2 </span><span class="s2">&gt;= </span><span class="s1">that</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">()</span>
+                <span class="s2">&amp;&amp; </span><span class="s1">that</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">() + </span><span class="s0">this</span><span class="s2">.</span><span class="s1">width </span><span class="s2">/ </span><span class="s3">2 </span><span class="s2">+ </span><span class="s1">that</span><span class="s2">.</span><span class="s1">width </span><span class="s2">/ </span><span class="s3">2 </span><span class="s2">&gt;= </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getX</span><span class="s2">()</span>
+                <span class="s2">&amp;&amp; </span><span class="s1">that</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">() + </span><span class="s0">this</span><span class="s2">.</span><span class="s1">height </span><span class="s2">/ </span><span class="s3">2 </span><span class="s2">+ </span><span class="s1">that</span><span class="s2">.</span><span class="s1">height </span><span class="s2">/ </span><span class="s3">2 </span><span class="s2">&gt;= </span><span class="s0">this</span><span class="s2">.</span><span class="s1">getY</span><span class="s2">());</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public abstract void </span><span class="s1">draw</span><span class="s2">(</span><span class="s1">Graphics g</span><span class="s2">);</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>
