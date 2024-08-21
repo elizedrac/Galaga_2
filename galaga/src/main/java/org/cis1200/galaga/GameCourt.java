@@ -546,7 +546,7 @@ public class GameCourt extends JPanel {
             if (points > highScore) {
                 highScore = points;
                 //update file with new high score
-                FileUtilities.writeStringsToFile(String.valueOf(highScore), file, false);
+                FileUtilities.writeStringToFile(String.valueOf(highScore), file, false);
             }
         }
     }
