@@ -53,6 +53,7 @@ public class GameCourt extends JPanel {
     private int bugBeam;
     private Bug fighterBug = null;
     private Fighter takenFighter = null;
+    private int takenFighterNum;
 
     //fighter variables
     private final Fighter[] fighters = new Fighter[3]; //for multiple players
@@ -231,8 +232,10 @@ public class GameCourt extends JPanel {
         endgame = false;
         r = true;
 
+        //variables for taken fighter feature
         currFighter = 0;
         takenFighter = null;
+        takenFighterNum = 0;
         bugBeam = (int)(Math.random() * 8); //chooses which green bug to project beam
 
         //3 fighters
@@ -463,16 +466,18 @@ public class GameCourt extends JPanel {
                             bug.setBeam(false);
                             fighterBug = bug;
                             fighter.setTaken(true, fighterBug);
+                            takenFighterNum = currFighter;
                             takenFighter = fighters[currFighter];
                             hitsHelper(null);
                         }
-                        // check for if fighter has been hit
+                        // check for if fighter has been hit directly by bug
                         if (bug.hit(fighter) && fighter.getStatus() && !pauseMode) {
                             if (takenFighter != null && fighterBug != null && bug == fighterBug) {
                                 takenFighter.taken(false);
                                 takenFighter.setStatus(false);
                             }
                             hitsHelper(bug);
+                            //kills bug as well
                             if (bugsRemaining != 1) {
                                 bug.setStatus(false);
                                 bugsRemaining--;
@@ -684,7 +689,8 @@ public class GameCourt extends JPanel {
             String s = new String();
             int x = 0;
 
-            if (takenFighter != null && takenFighter.getTaken() && !takenFighter.getDub()) {
+            if (takenFighter != null && takenFighter.getTaken() &&
+                    !takenFighter.getDub() && takenFighterNum == currFighter - 1) {
                 g.setColor(Color.RED);
                 s = "fighter taken";
                 x = 330;
