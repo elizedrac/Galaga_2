@@ -5,6 +5,7 @@ import org.cis1200.LineIterator;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -80,14 +81,14 @@ public class GameCourt extends JPanel {
     int total;
 
     //FileIO code
-//    File file;
+    File file;
 
     public GameCourt(JLabel status) {
         //FileIO code
-//        file = FileUtilities.createFile("gameInfo");
-//        FileUtilities.writeStringsToFile("hi", file, true);
-//
-//        LineIterator fileIterator = new LineIterator(file);
+        file = FileUtilities.createFile("gameInfo");
+        FileUtilities.writeStringsToFile("hi", file, true);
+
+        LineIterator fileIterator = new LineIterator(file);
 
         // creates border around the court area, JComponent method
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
