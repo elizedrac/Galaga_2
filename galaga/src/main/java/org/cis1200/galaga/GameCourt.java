@@ -28,7 +28,7 @@ public class GameCourt extends JPanel {
     private boolean gameEnd = false; //if game is over
     private boolean win = false; //win or lose
     private int points;
-    private int highScore = 0;
+    private int highScore;
     private final JLabel status; // Current status text, i.e. "Running..."
 
     private boolean pauseMode = false; //for when bugs and/or fighters are resetting
@@ -85,12 +85,17 @@ public class GameCourt extends JPanel {
 
     public GameCourt(JLabel status) {
         //FileIO code
-        file = FileUtilities.createFile("gameInfo");
-        FileUtilities.writeStringsToFile("hi", file, true);
+        file = FileUtilities.createFile("galagaInfo");
 
-        LineIterator fileIterator = new LineIterator(file);
+        LineIterator lineIterator = new LineIterator(file); //iterates through lines of files
 
-        // creates border around the court area, JComponent method
+        if (lineIterator.hasNext()) {
+            highScore = Integer.parseInt(lineIterator.next());
+        } else {
+            highScore = 0;
+        }
+
+        //creates border around the court area, JComponent method
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
         setBackground(Color.BLACK);
 
@@ -98,10 +103,8 @@ public class GameCourt extends JPanel {
         Timer timer = new Timer(INTERVAL, e -> tick());
         timer.start(); // MAKE SURE TO START THE TIMER!
 
-        // Enable keyboard focus on the court area. When this component has the
-        // keyboard focus, key events are handled by its key listener.
+        //keyboard focus on game
         setFocusable(true);
-        requestFocus();
 
         //key listeners
         addKeyListener(new KeyAdapter() {
@@ -542,6 +545,8 @@ public class GameCourt extends JPanel {
         if (gameEnd) {
             if (points > highScore) {
                 highScore = points;
+                //update file with new high score
+                FileUtilities.writeStringsToFile(String.valueOf(highScore), file, false);
             }
         }
     }
