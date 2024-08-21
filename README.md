@@ -22,7 +22,7 @@ Press the space bar to begin playing or pause/unpause at any time. Press the res
   - RunGalaga: Sets up frame to run the Game.
   - GameCourt: Primary game logic that allows for all the game objects to interact with each other
   in a time-based manner.
-  - GalagaObj (abstract): Abstract class containing shared functionality of most game objects
+  - GalagaObj (abstract): Abstract class containing shared functionality of most game objects.
   - Fire: Extends GalagaObj. Draws a bullet-like element that can be shot by the fighter or a random bug.
   - Fighter: Extends GalagaObj. Displays player's game piece that moves horizontally at the bottom of the
   screen and can shoot at bugs.
@@ -30,6 +30,8 @@ Press the space bar to begin playing or pause/unpause at any time. Press the res
   - RedBug: Extends Bug. In charge of the appearance and specific features of the red bugs.
   - GreenBug: Extends Bug. In charge of the appearance and specific features of the green bugs.
   - BlueBug: Extends Bug. In charge of the appearance and specific features of the blue bugs.
+  - File Utilities: Basic static FileIO methods to manage creating and writing to files.
+  - Line Iterator: Constructs an iterator to traverse through each line of a given file.
 (All classes can be found in the src folder)
 
 ========================
