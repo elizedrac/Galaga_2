@@ -11,7 +11,8 @@ public class RandomDot extends GalagaObj {
     private int opacity;
 
     public RandomDot() {
-        super((int)(Math.random() * GameCourt.GAME_WIDTH),(int)(Math.random() * GameCourt.GAME_HEIGHT));
+        super((int)(Math.random() * GameCourt.GAME_WIDTH),
+                (int)(Math.random() * GameCourt.GAME_HEIGHT));
         r = (int)(Math.random() * 200 + 55);
         g = (int)(Math.random() * 200 + 55);
         b = (int)(Math.random() * 200 + 55);

@@ -89,13 +89,6 @@ public abstract class GalagaObj {
         return this.height;
     }
 
-//    public boolean hit(GalagaObj that) {
-//        return (this.getX() + this.WIDTH > that.getX()
-//                && this.getY() + this.HEIGHT > that.getY()
-//                && that.getX() + that.WIDTH > this.getX()
-//                && that.getY() + that.HEIGHT > this.getY());
-//    }
-
     public boolean hit(GalagaObj that) {
         return (this.getX() + this.width / 2 + that.width / 2 >= that.getX()
                 && this.getY() + this.height / 2 + that.height / 2 >= that.getY()

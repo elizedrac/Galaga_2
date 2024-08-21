@@ -28,7 +28,9 @@ public class Fighter extends GalagaObj {
     }
 
     public void setDub(boolean b) {
-        if (b) { this.setWidth(this.getWidth() * 2); };
+        if (b) {
+            this.setWidth(this.getWidth() * 2);
+        }
         this.dub = b;
     }
 
@@ -104,7 +106,7 @@ public class Fighter extends GalagaObj {
         double angle = this.getAngle();
 
         g.translate(this.getX(), this.getY());
-        g.rotate(angle * Math.PI/180);
+        g.rotate(angle * Math.PI / 180);
         g.translate(-this.getX(), -this.getY());
 
 
@@ -116,7 +118,7 @@ public class Fighter extends GalagaObj {
         }
 
         g.translate(this.getX(), this.getY());
-        g.rotate(-angle * Math.PI/180);
+        g.rotate(-angle * Math.PI / 180);
         g.translate(-this.getX(), -this.getY());
     }
 

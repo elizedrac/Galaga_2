@@ -25,9 +25,9 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2024</copyright>
     <item>
-      <title>File: 5,
+      <title>File: 6,
              Errors: 0,
-             Warnings: 0,
+             Warnings: 6,
              Infos: 0
       </title>
             <link>https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html</link>
@@ -46,13 +46,13 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.GameCourtTest.java">org/cis1200/GameCourtTest.java</a>
+                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.FileUtilities.java">org/cis1200/FileUtilities.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  0
+                  2
                 </td>
                 <td>
                   0
@@ -60,13 +60,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.galaga.Bug.java">org/cis1200/galaga/Bug.java</a>
+                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.galaga.RandomDot.java">org/cis1200/galaga/RandomDot.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  0
+                  1
                 </td>
                 <td>
                   0
@@ -102,13 +102,27 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.galaga.RunGalaga.java">org/cis1200/galaga/RunGalaga.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.galaga.GameCourt.java">org/cis1200/galaga/GameCourt.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  0
+                  2
                 </td>
                 <td>
                   0

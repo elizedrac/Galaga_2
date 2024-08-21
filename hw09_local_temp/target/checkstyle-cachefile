@@ -1,16 +1,16 @@
-#Tue Apr 30 22:17:59 EDT 2024
+#Wed Aug 21 17:55:55 EEST 2024
+/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/CSV.java=1722027464900
 /Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/Game.java=1713580102000
-/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/BlueBug.java=1714526784221
-/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/Bug.java=1714528211368
-/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/Fighter.java=1714329730000
-/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/Fire.java=1714448339094
-/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/GalagaObj.java=1714490396729
-/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/GameCourt.java=1714529397177
-/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/GreenBug.java=1714330952000
-/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/RandomDot.java=1714330552000
-/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/RedBug.java=1714526809313
-/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/RunGalaga.java=1714501375118
+/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/LineIterator.java=1721681522889
+/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/BlueBug.java=1724252141460
+/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/Bug.java=1717793594792
+/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/Explosion.java=1717283117593
+/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/Fighter.java=1724251308572
+/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/Fire.java=1717280786515
+/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/GalagaObj.java=1718656541977
+/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/GreenBug.java=1724251308578
+/Users/elizedracopoulos/Downloads/hw09_local_temp/src/main/java/org/cis1200/galaga/RedBug.java=1724252141456
 /Users/elizedracopoulos/Downloads/hw09_local_temp/src/test/java/org/cis1200/BugTest.java=1714458626779
 /Users/elizedracopoulos/Downloads/hw09_local_temp/src/test/java/org/cis1200/CompilationTest.java=1713300670000
-/Users/elizedracopoulos/Downloads/hw09_local_temp/src/test/java/org/cis1200/GameCourtTest.java=1714527400716
+/Users/elizedracopoulos/Downloads/hw09_local_temp/src/test/java/org/cis1200/GameCourtTest.java=1717120476861
 configuration*?=D033538533793118A88CA943D7C2BF1D6C134C4B

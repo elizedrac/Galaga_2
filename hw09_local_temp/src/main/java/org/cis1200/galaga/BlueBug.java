@@ -18,31 +18,6 @@ public class BlueBug extends Bug {
         setPoints(POINTS);
     }
 
-//    public void testFall() {
-//        moveY(-5);
-//        double y = this.getY();
-//
-//        double angleInRadians = Math.toRadians(45);
-//        double cos45 = Math.cos(angleInRadians);
-//        double sin45 = Math.sin(angleInRadians);
-//
-//
-//        if (this.getX() > 305) {
-//            setX((int)(200 - (2 * (-y + 350) * cos45 - sin45
-//                    + Math.sqrt(Math.pow(2 * (-y + 350) * cos45 - sin45, 2)
-//                    + 4 * Math.pow(-y + 350, 2) * (Math.pow(sin45, 2) - Math.pow(cos45, 2))
-//                    - 4 * (-y + 350) * sin45)) / 0.01));
-//        } else {
-//            setX((int)(200 - (2 * (-y + 350) * cos45 - sin45
-//                    - Math.sqrt(Math.pow(2 * (-y + 350) * cos45 - sin45, 2)
-//                    + 4 * Math.pow(-y + 350, 2) * (Math.pow(sin45, 2) - Math.pow(cos45, 2))
-//                    - 4 * (-y + 350) * sin45)) / 0.01));
-//        }
-//
-//    }
-
-
-
     int currX  = 0;
     boolean done = false;
     boolean top = false;
@@ -57,7 +32,8 @@ public class BlueBug extends Bug {
             c++;
         }
 
-        if (this.getY() - GalagaObj.HEIGHT / 2 >= GameCourt.GAME_HEIGHT - 245 && !done && !this.getEndgame()) {
+        if (this.getY() - GalagaObj.HEIGHT / 2 >= GameCourt.GAME_HEIGHT
+                - 245 && !done && !this.getEndgame()) {
             first = true;
             currX = this.getX();
             done = true;
@@ -67,20 +43,25 @@ public class BlueBug extends Bug {
         int x = 0;
         if (first) {
             if (!top) {
-                int m = - (int)(10 - 4 * Math.abs(x / (Math.sqrt(Math.pow(rad, 2) - Math.sqrt(Math.pow(x, 2))))));
+                int m = - (int)(10 - 4 * Math.abs(x / (Math.sqrt(Math.pow(rad, 2)
+                        - Math.sqrt(Math.pow(x, 2))))));
                 moveX(m);
                 x = this.getX() - currX + rad;
-                setAngle(180 * Math.atan(-x / (Math.sqrt(Math.pow(rad, 2) - Math.sqrt(Math.pow(x, 2))))) / Math.PI - 90);
+                setAngle(180 * Math.atan(-x / (Math.sqrt(Math.pow(rad, 2) -
+                        Math.sqrt(Math.pow(x, 2))))) / Math.PI - 90);
                 setY((int) (Math.sqrt(Math.pow(rad, 2) - Math.pow(x, 2)) + height));
                 if (this.getY() == height) {
                     top = true;
                 }
             } else {
-                int m = (int)(10 - 4 * Math.abs(x / (Math.sqrt(Math.pow(rad, 2) - Math.sqrt(Math.pow(x, 2))))));
+                int m = (int)(10 - 4 * Math.abs(x / (Math.sqrt(Math.pow(rad, 2) -
+                        Math.sqrt(Math.pow(x, 2))))));
                 moveX(m);
                 x = this.getX() - currX + rad;
-                setAngle(90 - 180 * Math.atan(-x / (Math.sqrt(Math.pow(rad, 2) - Math.sqrt(Math.pow(x, 2))))) / Math.PI);
-                setY((int) (-Math.sqrt(Math.pow(rad, 2) - Math.pow(this.getX() - currX + rad, 2)) + height));
+                setAngle(90 - 180 * Math.atan(-x / (Math.sqrt(Math.pow(rad, 2) -
+                        Math.sqrt(Math.pow(x, 2))))) / Math.PI);
+                setY((int) (-Math.sqrt(Math.pow(rad, 2) -
+                        Math.pow(this.getX() - currX + rad, 2)) + height));
                 if (this.getY() == height) {
                     first = false;
                     top = false;
@@ -110,7 +91,7 @@ public class BlueBug extends Bug {
         double angle = this.getAngle();
 
         g.translate(this.getX(), this.getY());
-        g.rotate(angle * Math.PI/180);
+        g.rotate(angle * Math.PI / 180);
         g.translate(-this.getX(), -this.getY());
 
         g.setColor(colorBlue);
@@ -136,7 +117,7 @@ public class BlueBug extends Bug {
         g.fillRect(this.getX() - 6, this.getY() - 8, 4, 2);
 
         g.translate(this.getX(), this.getY());
-        g.rotate(-angle * Math.PI/180);
+        g.rotate(-angle * Math.PI / 180);
         g.translate(-this.getX(), -this.getY());
     }
 }

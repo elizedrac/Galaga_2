@@ -35,7 +35,8 @@ public class RedBug extends Bug {
 //            moveY(12);
             moveX((int) ((amp - 3) * Math.sin(this.getY() / 40)));
 
-            this.setAngle(180 - 180 * (Math.atan((amp) * Math.cos((this.getY() + 16) / 40) / 40)) / Math.PI);
+            this.setAngle(180 - 180 * (Math.atan((amp) *
+                    Math.cos((this.getY() + 16) / 40) / 40)) / Math.PI);
         }
 
         count++;
@@ -53,7 +54,7 @@ public class RedBug extends Bug {
         double angle = this.getAngle();
 
         g.translate(this.getX(), this.getY());
-        g.rotate(angle * Math.PI/180);
+        g.rotate(angle * Math.PI / 180);
         g.translate(-this.getX(), -this.getY());
 
 
@@ -82,7 +83,7 @@ public class RedBug extends Bug {
         g.fillRect(this.getX() - 3, this.getY() + 1, 6, 4);
 
         g.translate(this.getX(), this.getY());
-        g.rotate(-angle * Math.PI/180);
+        g.rotate(-angle * Math.PI / 180);
         g.translate(-this.getX(), -this.getY());
     }
 }

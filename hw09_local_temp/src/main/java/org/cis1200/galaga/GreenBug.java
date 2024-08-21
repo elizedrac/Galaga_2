@@ -49,7 +49,7 @@ public class GreenBug extends Bug {
 
         if (this.beam) {
             setBeamNum(this.beamNum + n);
-            if (beamNum == 18){
+            if (beamNum == 18) {
                 n *= -1;
             }
             if (this.beamNum == 0) {
@@ -86,7 +86,7 @@ public class GreenBug extends Bug {
         double angle = this.getAngle();
 
         g.translate(this.getX(), this.getY());
-        g.rotate(angle * Math.PI/180);
+        g.rotate(angle * Math.PI / 180);
         g.translate(-this.getX(), -this.getY());
 
         g.setColor(color);
@@ -122,7 +122,7 @@ public class GreenBug extends Bug {
         g.fillRect(this.getX() + 10, this.getY() + 3, 2, 4);
 
         g.translate(this.getX(), this.getY());
-        g.rotate(-angle * Math.PI/180);
+        g.rotate(-angle * Math.PI / 180);
         g.translate(-this.getX(), -this.getY());
 
         drawBeam(g);

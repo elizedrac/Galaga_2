@@ -1,5 +1,8 @@
 package org.cis1200.galaga;
 
+import org.cis1200.FileUtilities;
+import org.cis1200.LineIterator;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -7,24 +10,19 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import javax.swing.*;
 
-/**
- * GameCourt
- * This class holds the primary game logic for how different objects interact
- * with one another.
- */
+//class handling all object interactions/simulating game
 public class GameCourt extends JPanel {
     //Court Variables
     public static final int START_X = 77;
     public static final int START_Y = 65;
     public static final int GAME_WIDTH = 850;
     public static final int GAME_HEIGHT = 850;
-    // Update interval for timer, in milliseconds
+    //update interval for timer, in milliseconds
     public static final int INTERVAL = 20;
     //keeps track of milliseconds
     private int count = 0;
 
-
-    // Game status variables
+    //game status variables
     private boolean playing = false; //whether the game is running
     private boolean gameEnd = false; //if game is over
     private boolean win = false; //win or lose
@@ -34,7 +32,6 @@ public class GameCourt extends JPanel {
 
     private boolean pauseMode = false; //for when bugs and/or fighters are resetting
     private boolean endgame; //final three bugs
-
 
     //Bug variables;
     private final int w = 4; //grid rows
@@ -56,8 +53,7 @@ public class GameCourt extends JPanel {
     private Bug fighterBug = null;
     private Fighter takenFighter = null;
 
-
-    //Fighter variables
+    //fighter variables
     private final Fighter[] fighters = new Fighter[3]; //for multiple players
     private Fighter fighter;
     private int currFighter = 0; //keeps track of lives/fighter number
@@ -65,15 +61,12 @@ public class GameCourt extends JPanel {
     private ListIterator<Fire> fireIterator; //iterates through fire
     private boolean left = false; //fighter direction
 
-
     //explosion variables
     private Explosion fighterExplosion = new Explosion();
     private Explosion bugExplosion = new Explosion();
 
-
     //background effects
     private final RandomDot[] dots = new RandomDot[300];
-
 
     //key variables
     int k1 = KeyEvent.VK_UP;
@@ -82,15 +75,20 @@ public class GameCourt extends JPanel {
         this.k1 = k1;
     }
 
-
     //fire stats
     int hits;
     int total;
 
-    //test bug
-    BlueBug bug = new BlueBug(-10, 1000);
+    //FileIO code
+//    File file;
 
     public GameCourt(JLabel status) {
+        //FileIO code
+//        file = FileUtilities.createFile("gameInfo");
+//        FileUtilities.writeStringsToFile("hi", file, true);
+//
+//        LineIterator fileIterator = new LineIterator(file);
+
         // creates border around the court area, JComponent method
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
         setBackground(Color.BLACK);
@@ -102,6 +100,7 @@ public class GameCourt extends JPanel {
         // Enable keyboard focus on the court area. When this component has the
         // keyboard focus, key events are handled by its key listener.
         setFocusable(true);
+        requestFocus();
 
         //key listeners
         addKeyListener(new KeyAdapter() {
@@ -125,13 +124,14 @@ public class GameCourt extends JPanel {
                     fighter.setGo(true);
                 }
                 //fighter shooting
-                if (e.getKeyCode() == k1 && (playing || win) && !pauseMode && (count % 40 == 0 || count % 180 == 0)) {
+                if (e.getKeyCode() == k1 && (playing || win) &&
+                        !pauseMode && (count % 40 == 0 || count % 180 == 0)) {
                     total++;
                     if (!fighter.getDub()) {
                         fighterShooter(0);
                     } else {
-                        fighterShooter((fighter.WIDTH + 6)/ 2);
-                        fighterShooter(-(fighter.WIDTH + 6)/ 2);
+                        fighterShooter((fighter.WIDTH + 6) / 2);
+                        fighterShooter(-(fighter.WIDTH + 6) / 2);
                     }
                 }
             }
@@ -181,7 +181,7 @@ public class GameCourt extends JPanel {
 
 
     //setBugFire helper
-    public void BugFires(int i, Bug bug) {
+    public void bugFires(int i, Bug bug) {
         bugFires[i].setX(bug.getX());
         bugFires[i].setY(bug.getY());
         bugFires[i].setGo(true);
@@ -191,10 +191,11 @@ public class GameCourt extends JPanel {
     //add rand helper specifically for bug fire
     public void setBugFire(Bug bug) {
         if (currBug == null || currBug != bug || bugsRemaining == 1) {
-            if (!bugFires[0].getGo() && (!bugFires[1].getGo() || (Math.random() < 0.5)) || bugsRemaining == 1) {
-                BugFires(0, bug);
+            if (!bugFires[0].getGo() && (!bugFires[1].getGo() || (Math.random() < 0.5))
+                    || bugsRemaining == 1) {
+                bugFires(0, bug);
             } else if (!bugFires[1].getGo() && Math.random() < 0.5) {
-                BugFires(1, bug);
+                bugFires(1, bug);
             }
             currBug = bug;
         }
@@ -216,10 +217,9 @@ public class GameCourt extends JPanel {
     }
 
 
-    /**
-     * (Re-)set the game to its initial state.
-     */
+    //initial state of game
     public void reset() {
+        //variables to keep track of hit percentage
         hits = 0;
         total = 0;
 
@@ -382,7 +382,7 @@ public class GameCourt extends JPanel {
         }
     }
 
-    //Update move count for bugs moving at top of the screen
+    //update move count for bugs moving at top of the screen
     //this affects the new starting X position that the bugs must return to when resetting
     public void moveBugs() {
         if (count % 420 == 0) {
@@ -394,7 +394,7 @@ public class GameCourt extends JPanel {
     }
 
     public void hitsHelper(Bug bug) {
-        if (fighter.getDub()){
+        if (fighter.getDub()) {
             fighter.setDub(false);
         } else {
             pauseMode = true;
@@ -409,7 +409,8 @@ public class GameCourt extends JPanel {
         }
         //resets explosion and sets it next to bug's position
         if (!fighter.getTaken()) {
-            fighterExplosion = new Explosion(fighter.getX(), fighter.getY(), Color.RED, Color.WHITE);
+            fighterExplosion = new Explosion(fighter.getX(), fighter.getY(),
+                    Color.RED, Color.WHITE);
             if (bug != null) {
                 bugExplosion = new Explosion(bug.getX(), bug.getY(), Color.GREEN, Color.MAGENTA);
                 bugExplosion.set(false);
@@ -445,7 +446,9 @@ public class GameCourt extends JPanel {
                                     bugBeam = -1;
                                     bug.setBeam(true);
                                 }
-                            } catch (ArrayIndexOutOfBoundsException e) {}
+                            } catch (ArrayIndexOutOfBoundsException e) {
+
+                            }
                             bug.fall();
                         }
                     }
@@ -478,17 +481,22 @@ public class GameCourt extends JPanel {
                     for (Fire f :
                             fire) {
                         if (bug.status() && f.hit(bug) && f.getGo()) {
-                            hits++;
+                            if (!gameEnd) {
+                                hits++;
+                            }
+
                             bug.beenHit();
                             try {
                                 if (bug == bugGrid[0][bugBeam] && !bug.status()) {
-                                    int c = 0;
+                                    int c = 0; //up to 8 bugs, does not update if all green bugs killed
                                     while (!bugGrid[0][bugBeam].status() && c < 8) {
                                         bugBeam = (int)(Math.random() * 8);
                                         c++;
                                     }
                                 }
-                            } catch (ArrayIndexOutOfBoundsException e){}
+                            } catch (ArrayIndexOutOfBoundsException e) {
+
+                            }
 
                             if (takenFighter != null && bug == fighterBug && !bug.status()) {
                                 takenFighter.setDub(true);
@@ -509,7 +517,8 @@ public class GameCourt extends JPanel {
                                     status.setText("You win!");
                                 }
                                 //resets explosion and sets it next to bug's position
-                                bugExplosion = new Explosion(bug.getX(), bug.getY(), Color.GREEN, Color.MAGENTA, bug.getPoints());
+                                bugExplosion = new Explosion(bug.getX(), bug.getY(), Color.GREEN,
+                                        Color.MAGENTA, bug.getPoints());
                                 bugExplosion.set(true);
                             }
                         }
@@ -519,7 +528,8 @@ public class GameCourt extends JPanel {
         }
 
         for (int i = 0; i < bugFires.length; i++) {
-            if (bugFires[i].hit(fighter) && fighter.getStatus() && !fighter.getTaken() && !pauseMode) {
+            if (bugFires[i].hit(fighter) && fighter.getStatus() &&
+                    !fighter.getTaken() && !pauseMode) {
                 hitsHelper(null);
                 bugFires[i].setGo(false);
                 bugFires[i].restart();
@@ -554,14 +564,16 @@ public class GameCourt extends JPanel {
             fighterBug.setBeamNum(0);
         }
 
-        if (takenFighter != null && takenFighter.getY() >= fighter.getY() - HEIGHT/2 && takenFighter.getDub()) {
+        if (takenFighter != null && takenFighter.getY() >= fighter.getY()
+                - HEIGHT / 2 && takenFighter.getDub()) {
             fighter.setDub(true);
             takenFighter.taken(false);
             takenFighter.setStatus(false);
             takenFighter.setDub(false);
         }
 
-        if (rand.isEmpty() && (takenFighter == null || fighter.getDub() || !takenFighter.getDub())) {
+        if (rand.isEmpty() && (takenFighter == null || fighter.getDub() ||
+                !takenFighter.getDub())) {
             if (r) {
                 fighter = fighters[currFighter];
                 fighter.setX(428);
@@ -583,12 +595,8 @@ public class GameCourt extends JPanel {
     }
 
 
-    /**
-     * This method is called every time the timer defined in the constructor
-     * triggers.
-     */
+    //timer function that runs every tick
     public void tick() {
-
         //count allows for objects to react in slightly different time frames
         count += INTERVAL;
 
@@ -705,6 +713,10 @@ public class GameCourt extends JPanel {
             g.setFont(new Font("Mont Blanc", Font.ITALIC, 20));
             g.drawString("Points = " + points, 315, GAME_HEIGHT / 2);
             g.drawString("High Score = " + highScore, 315, GAME_HEIGHT / 2 + 40);
+            if (total == 0) {
+                hits = 1;
+                total = 1;
+            }
             g.drawString("Hit Ratio = " + (hits * 100) / total + "%", 315, GAME_HEIGHT / 2 + 80);
         }
 
