@@ -131,7 +131,9 @@ public class GameCourt extends JPanel {
                 //fighter shooting
                 if (e.getKeyCode() == k1 && (playing || win) &&
                         !pauseMode && (count % 40 == 0 || count % 180 == 0)) {
-                    total++;
+                    if (!gameEnd && !pauseMode) {
+                        total++;
+                    }
                     if (!fighter.getDub()) {
                         fighterShooter(0);
                     } else {
